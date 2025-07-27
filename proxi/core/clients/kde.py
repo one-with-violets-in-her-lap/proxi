@@ -35,6 +35,33 @@ class KdeProxyClient:
             http_proxy=http_proxy, https_proxy=https_proxy, socks5_proxy=socks5_proxy
         )
 
+    def set_proxy_profile(self, proxy_profile: ProxyProfile):
+        self._set_proxy_in_kde_config("httpProxy", proxy_profile.http_proxy)
+        self._set_proxy_in_kde_config("httpsProxy", proxy_profile.https_proxy)
+        self._set_proxy_in_kde_config("socksProxy", proxy_profile.socks5_proxy)
+
+    def _set_proxy_in_kde_config(self, key: str, proxy_url: str | None):
+        proxy_config_value = ""
+
+        if proxy_url is not None:
+            protocol, host, port = proxy_url.split(":")
+            proxy_config_value = f"{protocol}:{host} {port}"
+
+        proxy_update_result = subprocess.run(
+            [
+                "kwriteconfig6",
+                "--file",
+                KDE_CONFIG_PATH,
+                "--group",
+                "Proxy Settings",
+                "--key",
+                key,
+                proxy_config_value,
+            ]
+        )
+
+        return proxy_update_result
+
     def _get_proxy_from_kde_config(self, key: str):
         proxy = (
             subprocess.check_output(
@@ -58,3 +85,14 @@ class KdeProxyClient:
         host, port = proxy.split(" ")
 
         return host + ":" + port
+
+
+c = KdeProxyClient()
+# c.set_proxy_profile(
+#     ProxyProfile(
+#         socks5_proxy=None,
+#         https_proxy="https://localhost:10808",
+#         http_proxy="http://localhost:1000",
+#     )
+# )
+print(c.get_current_proxy_profile())
