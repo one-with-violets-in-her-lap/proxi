@@ -2,7 +2,7 @@ import sys
 
 from PySide6 import QtSvgWidgets, QtWidgets
 
-from proxi.ui.switch_widget import ToggleSwitchButton
+from proxi.ui.widgets.status_switch import StatusSwitch
 
 WINDOW_WIDTH = 460
 WINDOW_HEIGHT = 700
@@ -17,27 +17,14 @@ class MainWidget(QtWidgets.QFrame):
         # TODO: come up with a better way to apply css
         self.setStyleSheet("#mainWidget {background-color:white;}")
 
-        # TODO: move to a separate module
-        self.active_switch_container = QtWidgets.QWidget()
-        self.active_switch_layout = QtWidgets.QHBoxLayout()
-        self.active_switch_layout.setSpacing(12)
-        self.active_switch_layout.setContentsMargins(0, 0, 0, 0)
-
-        self.active_switch = ToggleSwitchButton()
-        self.active_switch_label = QtWidgets.QLabel()
-        self.active_switch_label.setText("Proxy preferences enabled")
-
-        self.active_switch_layout.addWidget(self.active_switch)
-        self.active_switch_layout.addWidget(self.active_switch_label)
-
-        self.active_switch_container.setLayout(self.active_switch_layout)
-
         self.logo = QtSvgWidgets.QSvgWidget("./assets/logo-light-theme.svg")
         self.logo.setFixedSize(96, 56)
 
+        self.status_switch = StatusSwitch()
+
         self.box_layout = QtWidgets.QVBoxLayout(self)
         self.box_layout.addWidget(self.logo)
-        self.box_layout.addWidget(self.active_switch_container)
+        self.box_layout.addWidget(self.status_switch)
         self.box_layout.addStretch(0)
         self.box_layout.setSpacing(20)
 
