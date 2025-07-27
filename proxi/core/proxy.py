@@ -1,15 +1,23 @@
 import subprocess
 from dataclasses import dataclass
+from typing import Literal
+
+
+@dataclass
+class Proxy:
+    protocol: Literal["socks5", "http", "https"]
+    host: str
+    port: int
 
 
 @dataclass
 class ProxyProfile:
-    http_proxy_url: str | None
-    https_proxy_url: str | None
-    socks_proxy_url: str | None
+    http_proxy: Proxy
+    https_proxy: Proxy
+    socks5_proxy: Proxy
 
 
-def get_current_proxy() -> ProxyProfile:
+def get_current_proxy():
     http_proxy_host = subprocess.run(
         ["gsettings", "get", "org.gnome.system.proxy.http", "host"],
         capture_output=True,
@@ -46,8 +54,4 @@ def get_current_proxy() -> ProxyProfile:
         text=True,
     )
 
-    return ProxyProfile(
-        http_proxy_url=f"{http_proxy_host}:{http_proxy_port}",
-        https_proxy_url=f"{https_proxy_host}:{https_proxy_port}",
-        socks_proxy_url=f"{socks_proxy_host}:{socks_proxy_port}",
-    )
+    # TODO: return proxy profile
