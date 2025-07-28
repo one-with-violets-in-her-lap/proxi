@@ -1,12 +1,13 @@
 import os
 import subprocess
 
+from proxi.core.clients.base import ProxyManager
 from proxi.core.proxy import ProxyProfile
 
 KDE_CONFIG_PATH = os.path.expanduser("~/.config/kioslaverc")
 
 
-class KdeProxyClient:
+class KdeProxyManager(ProxyManager):
     def get_is_proxy_active(self):
         proxy_type = (
             subprocess.check_output(
@@ -85,14 +86,3 @@ class KdeProxyClient:
         host, port = proxy.split(" ")
 
         return host + ":" + port
-
-
-c = KdeProxyClient()
-# c.set_proxy_profile(
-#     ProxyProfile(
-#         socks5_proxy=None,
-#         https_proxy="https://localhost:10808",
-#         http_proxy="http://localhost:1000",
-#     )
-# )
-print(c.get_current_proxy_profile())
