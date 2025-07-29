@@ -1,7 +1,7 @@
 import logging
 import sys
 
-from PySide6 import QtSvgWidgets, QtWidgets
+from PySide6 import QtCore, QtGui, QtSvgWidgets, QtWidgets
 
 from proxi.core.proxy_managers import ProxyManager
 from proxi.core.utils.platform import get_user_platform
@@ -24,6 +24,12 @@ class MainWidget(QtWidgets.QFrame):
         self.logo.setFixedSize(96, 56)
 
         self.status_switch = StatusSwitch(ProxyManager(get_user_platform()))
+
+        self.drawing_image = QtWidgets.QLabel()
+        self.drawing_image.setPixmap(QtGui.QPixmap("./assets/drawing.jpg"))
+        self.drawing_image.setParent(self)
+        self.drawing_image.setAlignment(QtCore.Qt.AlignmentFlag.AlignAbsolute)
+        self.drawing_image.move(20, 20)
 
         self.box_layout = QtWidgets.QVBoxLayout(self)
         self.box_layout.addWidget(self.logo)
