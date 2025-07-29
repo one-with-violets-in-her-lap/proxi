@@ -18,6 +18,17 @@ class GnomeProxyManager(BaseProxyManager):
     def get_is_proxy_active(self):
         return self._get_gsettings_value("org.gnome.system.proxy", "mode") == "manual"
 
+    def set_is_proxy_active(self, is_active: bool):
+        subprocess.run(
+            [
+                "gsettings",
+                "set",
+                "org.gnome.system.proxy",
+                "mode",
+                "manual" if is_active else "none",
+            ]
+        )
+
     def get_current_proxy_profile(self):
         return ProxyProfile(
             http_proxy=self._get_proxy_from_gsettings("http"),

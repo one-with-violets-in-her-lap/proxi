@@ -20,6 +20,9 @@ class StatusSwitch(QtWidgets.QWidget):
 
         self.switch = SwitchButton()
         self.switch.setChecked(self.proxy_manager.get_is_proxy_active())
+        self.switch.toggled.connect(
+            lambda is_toggled: self.proxy_manager.set_is_proxy_active(is_toggled)
+        )
 
         self.label = QtWidgets.QLabel()
         self.label.setText("Proxy preferences enabled")

@@ -27,6 +27,20 @@ class KdeProxyManager(BaseProxyManager):
 
         return proxy_type == "1"
 
+    def set_is_proxy_active(self, is_active):
+        subprocess.run(
+            [
+                "kwriteconfig6",
+                "--file",
+                KDE_CONFIG_PATH,
+                "--group",
+                "Proxy Settings",
+                "--key",
+                "ProxyType",
+                "1" if is_active else "0",
+            ],
+        )
+
     def get_current_proxy_profile(self):
         http_proxy = self._get_proxy_from_kde_config("httpProxy")
         https_proxy = self._get_proxy_from_kde_config("httpsProxy")

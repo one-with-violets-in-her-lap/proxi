@@ -9,6 +9,10 @@ class BaseProxyManager(ABC):
         pass
 
     @abstractmethod
+    def set_is_proxy_active(self, is_active: bool):
+        pass
+
+    @abstractmethod
     def get_current_proxy_profile(self) -> ProxyProfile | None:
         pass
 
