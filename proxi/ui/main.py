@@ -1,43 +1,50 @@
 import logging
 import sys
 
-from PySide6 import QtCore, QtGui, QtSvgWidgets, QtWidgets
+from PySide6 import QtSvgWidgets, QtWidgets
 
 from proxi.core.proxy_managers import ProxyManager
 from proxi.core.utils.platform import get_user_platform
+from proxi.ui.widgets.drawing_decoration import DrawingDecorationWidget
 from proxi.ui.widgets.status_switch import StatusSwitch
 
 WINDOW_WIDTH = 460
 WINDOW_HEIGHT = 700
 
 
-class MainWidget(QtWidgets.QFrame):
+class AppWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setObjectName("mainWidget")
+        self.setWindowTitle("Proxi")
+        self.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
+
+        self.setObjectName("mainWindow")
 
         # TODO: come up with a better way to apply css
-        self.setStyleSheet("#mainWidget {background-color:white;}")
+        self.setStyleSheet("#mainWindow {background-color:white;}")
+
+        self.drawing_image = DrawingDecorationWidget(self)
 
         self.logo = QtSvgWidgets.QSvgWidget("./assets/logo-light-theme.svg")
         self.logo.setFixedSize(96, 56)
 
         self.status_switch = StatusSwitch(ProxyManager(get_user_platform()))
 
-        self.drawing_image = QtWidgets.QLabel()
-        self.drawing_image.setPixmap(QtGui.QPixmap("./assets/drawing.jpg"))
-        self.drawing_image.setParent(self)
-        self.drawing_image.setAlignment(QtCore.Qt.AlignmentFlag.AlignAbsolute)
-        self.drawing_image.move(20, 20)
+        self.main_content_layout = QtWidgets.QVBoxLayout()
+        self.main_content_layout.addWidget(self.logo)
+        self.main_content_layout.addWidget(self.status_switch)
+        self.main_content_layout.addStretch(0)
+        self.main_content_layout.setSpacing(20)
 
-        self.box_layout = QtWidgets.QVBoxLayout(self)
-        self.box_layout.addWidget(self.logo)
-        self.box_layout.addWidget(self.status_switch)
-        self.box_layout.addStretch(0)
-        self.box_layout.setSpacing(20)
+        self.main_widget = QtWidgets.QWidget()
+        self.main_widget.setLayout(self.main_content_layout)
+        self.setCentralWidget(self.main_widget)
 
-        self.setLayout(self.box_layout)
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+
+        self.drawing_image.update_position_on_parent_resize()
 
 
 def main():
@@ -50,9 +57,8 @@ def main():
 
     app = QtWidgets.QApplication([])
 
-    main_widget = MainWidget()
-    main_widget.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
-    main_widget.show()
+    window = AppWindow()
+    window.show()
 
     sys.exit(app.exec())
 
