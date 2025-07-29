@@ -5,6 +5,7 @@ from proxi.core.utils.platform import Platform
 
 PROXY_MANAGERS_BY_PLATFORM: dict[Platform, type[BaseProxyManager]] = {
     Platform.GNOME: GnomeProxyManager,
+    Platform.CINNAMON: GnomeProxyManager,
     Platform.KDE_PLASMA: KdeProxyManager,
 }
 
