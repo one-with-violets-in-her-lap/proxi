@@ -1,11 +1,14 @@
 from PySide6 import QtGui, QtWidgets
 
+from proxi.core.proxy_managers._base import BaseProxyManager
 from proxi.ui.widgets.switch import SwitchButton
 
 
 class StatusSwitch(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self, proxy_manager: BaseProxyManager):
         super().__init__()
+
+        self.proxy_manager = proxy_manager
 
         self.label_font = QtGui.QFont()
         self.label_font.setWeight(QtGui.QFont.Weight.Light)
@@ -16,6 +19,8 @@ class StatusSwitch(QtWidgets.QWidget):
         self.status_switch_widget_layout.setContentsMargins(0, 0, 0, 0)
 
         self.switch = SwitchButton()
+        self.switch.setChecked(self.proxy_manager.get_is_proxy_active())
+
         self.label = QtWidgets.QLabel()
         self.label.setText("Proxy preferences enabled")
         self.label.setFont(self.label_font)

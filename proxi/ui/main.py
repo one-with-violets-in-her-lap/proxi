@@ -1,7 +1,10 @@
+import logging
 import sys
 
 from PySide6 import QtSvgWidgets, QtWidgets
 
+from proxi.core.proxy_managers import ProxyManager
+from proxi.core.utils.platform import get_user_platform
 from proxi.ui.widgets.status_switch import StatusSwitch
 
 WINDOW_WIDTH = 460
@@ -20,7 +23,7 @@ class MainWidget(QtWidgets.QFrame):
         self.logo = QtSvgWidgets.QSvgWidget("./assets/logo-light-theme.svg")
         self.logo.setFixedSize(96, 56)
 
-        self.status_switch = StatusSwitch()
+        self.status_switch = StatusSwitch(ProxyManager(get_user_platform()))
 
         self.box_layout = QtWidgets.QVBoxLayout(self)
         self.box_layout.addWidget(self.logo)
@@ -32,6 +35,13 @@ class MainWidget(QtWidgets.QFrame):
 
 
 def main():
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s: [%(levelname)s] %(name)s - %(message)s",
+        datefmt="%m/%d/%Y %I:%M:%S %p",
+        force=True,
+    )
+
     app = QtWidgets.QApplication([])
 
     main_widget = MainWidget()

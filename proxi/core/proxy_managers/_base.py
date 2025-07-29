@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from proxi.core.proxy import ProxyProfile
 
 
-class ProxyManager(ABC):
+class BaseProxyManager(ABC):
     @abstractmethod
     def get_is_proxy_active(self) -> bool:
         pass
