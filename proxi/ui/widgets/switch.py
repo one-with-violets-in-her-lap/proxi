@@ -1,3 +1,4 @@
+from PySide6 import QtCore
 from PySide6.QtCore import (
     Property,
     QEasingCurve,
@@ -48,6 +49,8 @@ class SwitchButton(QCheckBox):
         self._animation_group.addAnimation(self._container_animation)
 
         self.toggled.connect(self.start_animation)
+
+        self.setCursor(QtCore.Qt.CursorShape.PointingHandCursor)
 
     @Property(float)
     def pos_factor(self):
