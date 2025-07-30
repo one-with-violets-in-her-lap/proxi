@@ -1,6 +1,6 @@
 from PySide6 import QtCore, QtGui, QtWidgets
 
-from proxi.core.proxy import ProxyProfile
+from proxi.core.proxy import SystemProxySettings
 
 _STATUS_CIRCLE_COLORS = {
     "active": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #C3EE9D, stop:1 #86D441);",
@@ -25,7 +25,7 @@ class StatusCircleWidget(QtWidgets.QFrame):
 
 
 class ProxyProfileCardWidget(QtWidgets.QFrame):
-    def __init__(self, active: bool, proxy_profile: ProxyProfile):
+    def __init__(self, active: bool, proxy_settings: SystemProxySettings):
         super().__init__()
 
         self.setObjectName("proxyProfile")
@@ -58,7 +58,7 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
         self.header_layout.addWidget(self.profile_title)
 
         self.proxy_urls = QtWidgets.QLabel(
-            f"{proxy_profile.http_proxy}\n{proxy_profile.https_proxy}\n{proxy_profile.socks5_proxy}"
+            f"{proxy_settings.http_proxy}\n{proxy_settings.https_proxy}\n{proxy_settings.socks5_proxy}"
         )
         self.proxy_urls.setStyleSheet("""
             QLabel {

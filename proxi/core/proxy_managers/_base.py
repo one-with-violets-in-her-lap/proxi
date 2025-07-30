@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from proxi.core.proxy import ProxyProfile
+from proxi.core.proxy import SystemProxySettings
 
 
 class BaseProxyManager(ABC):
@@ -13,9 +13,9 @@ class BaseProxyManager(ABC):
         pass
 
     @abstractmethod
-    def get_current_proxy_profile(self) -> ProxyProfile | None:
+    def get_proxy_settings(self) -> SystemProxySettings | None:
         pass
 
     @abstractmethod
-    def set_proxy_profile(self, proxy_profile: ProxyProfile) -> None:
+    def set_proxy_settings(self, proxy_settings: SystemProxySettings) -> None:
         pass

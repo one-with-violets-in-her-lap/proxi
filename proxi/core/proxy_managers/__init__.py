@@ -29,8 +29,8 @@ class ProxyManager(BaseProxyManager):
     def set_is_proxy_active(self, is_active: bool):
         return self.platform_specific_proxy_manager.set_is_proxy_active(is_active)
 
-    def get_current_proxy_profile(self):
-        return self.platform_specific_proxy_manager.get_current_proxy_profile()
+    def get_proxy_settings(self):
+        return self.platform_specific_proxy_manager.get_proxy_settings()
 
-    def set_proxy_profile(self, proxy_profile):
-        self.platform_specific_proxy_manager.set_proxy_profile(proxy_profile)
+    def set_proxy_settings(self, proxy_settings):
+        self.platform_specific_proxy_manager.set_proxy_settings(proxy_settings)

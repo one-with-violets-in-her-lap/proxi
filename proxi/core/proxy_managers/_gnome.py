@@ -2,7 +2,7 @@ import logging
 import subprocess
 import urllib.parse
 
-from proxi.core.proxy import ProxyProfile, ProxyProtocol
+from proxi.core.proxy import SystemProxySettings, ProxyProtocol
 from proxi.core.proxy_managers._base import BaseProxyManager
 
 _GNOME_PROXY_TYPES_BY_PROTOCOL: dict[ProxyProtocol, str] = {
@@ -29,17 +29,17 @@ class GnomeProxyManager(BaseProxyManager):
             ]
         )
 
-    def get_current_proxy_profile(self):
-        return ProxyProfile(
+    def get_proxy_settings(self):
+        return SystemProxySettings(
             http_proxy=self._get_proxy_from_gsettings("http"),
             https_proxy=self._get_proxy_from_gsettings("https"),
             socks5_proxy=self._get_proxy_from_gsettings("socks5"),
         )
 
-    def set_proxy_profile(self, proxy_profile):
-        self._set_proxy_in_gsettings(proxy_profile.http_proxy, "http")
-        self._set_proxy_in_gsettings(proxy_profile.https_proxy, "https")
-        self._set_proxy_in_gsettings(proxy_profile.socks5_proxy, "socks5")
+    def set_proxy_settings(self, proxy_settings):
+        self._set_proxy_in_gsettings(proxy_settings.http_proxy, "http")
+        self._set_proxy_in_gsettings(proxy_settings.https_proxy, "https")
+        self._set_proxy_in_gsettings(proxy_settings.socks5_proxy, "socks5")
 
     def _get_proxy_from_gsettings(self, protocol: ProxyProtocol):
         gnome_proxy_type = _GNOME_PROXY_TYPES_BY_PROTOCOL[protocol]
