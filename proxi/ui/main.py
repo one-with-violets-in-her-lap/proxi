@@ -14,7 +14,7 @@ WINDOW_HEIGHT = 700
 
 
 class AppWindow(QtWidgets.QMainWindow):
-    def __init__(self):
+    def __init__(self, proxy_manager: ProxyManager):
         super().__init__()
 
         self.setWindowTitle("Proxi")
@@ -32,9 +32,11 @@ class AppWindow(QtWidgets.QMainWindow):
         self.logo = QtSvgWidgets.QSvgWidget("./assets/logo-light-theme.svg")
         self.logo.setFixedSize(96, 56)
 
-        self.status_switch = StatusSwitch(ProxyManager(get_user_platform()))
+        self.status_switch = StatusSwitch(proxy_manager)
 
-        self.proxy_profile_card = ProxyProfileCardWidget()
+        self.proxy_profile_card = ProxyProfileCardWidget(
+            active=False, proxy_profile=proxy_manager.get_current_proxy_profile()
+        )
 
         self.main_content_layout = QtWidgets.QVBoxLayout()
         self.main_content_layout.addWidget(self.logo)
@@ -65,7 +67,7 @@ def main():
 
     app = QtWidgets.QApplication([])
 
-    window = AppWindow()
+    window = AppWindow(ProxyManager(get_user_platform()))
     window.show()
 
     sys.exit(app.exec())

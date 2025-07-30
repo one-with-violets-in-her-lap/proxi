@@ -1,27 +1,31 @@
 from PySide6 import QtCore, QtGui, QtWidgets
 
+from proxi.core.proxy import ProxyProfile
+
+_STATUS_CIRCLE_COLORS = {
+    "active": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #C3EE9D, stop:1 #86D441);",
+    "disabled": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 white, stop:1 #CFCFCF);",
+}
+
 
 class StatusCircleWidget(QtWidgets.QFrame):
-    def __init__(self):
+    def __init__(self, active: bool):
         super().__init__()
 
         self.setObjectName("statusCircle")
 
-        self.setStyleSheet("""
-            #statusCircle {
-                border-radius: 6px;
-                background-color: qlineargradient(
-                    x1:0, y1:0, x2:1, y2:1, stop:0 #C3EE9D, stop:1 #86D441
-                );
-            }
-        """)
+        self.setStyleSheet(
+            "#statusCircle { border-radius: 6px;"
+            + f"background-color: {_STATUS_CIRCLE_COLORS['active' if active else 'disabled']};"
+            + "}"
+        )
 
         self.setFixedSize(12, 12)
         self.resize(12, 12)
 
 
 class ProxyProfileCardWidget(QtWidgets.QFrame):
-    def __init__(self):
+    def __init__(self, active: bool, proxy_profile: ProxyProfile):
         super().__init__()
 
         self.setObjectName("proxyProfile")
@@ -29,10 +33,10 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
         self.setStyleSheet("""
            #proxyProfile {
                border: 1px solid rgb(219, 219, 219);
-               border-radius: 6px;
+               border-radius: 10px;
                background-color: white;
                margin-top: 35px;
-               padding: 21px;
+               padding: 14px 20px;
                max-width: 600px;
            }
         """)
@@ -43,9 +47,9 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
         self.header_layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeft)
         self.header_layout.setSpacing(10)
 
-        self.status_circle = StatusCircleWidget()
+        self.status_circle = StatusCircleWidget(active)
 
-        self.profile_title = QtWidgets.QLabel("Profile 1")
+        self.profile_title = QtWidgets.QLabel("Unknown profile")
         self.profile_title_font = QtGui.QFont()
         self.profile_title_font.setWeight(QtGui.QFont.Weight.Light)
         self.profile_title.setFont(self.profile_title_font)
@@ -53,8 +57,10 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
         self.header_layout.addWidget(self.status_circle)
         self.header_layout.addWidget(self.profile_title)
 
-        self.proxy_url = QtWidgets.QLabel("https://192.168.1.1:5603")
-        self.proxy_url.setStyleSheet("""
+        self.proxy_urls = QtWidgets.QLabel(
+            f"{proxy_profile.http_proxy}\n{proxy_profile.https_proxy}\n{proxy_profile.socks5_proxy}"
+        )
+        self.proxy_urls.setStyleSheet("""
             QLabel {
                 font-weight: 300;
                 color: rgb(115,115,115);
@@ -62,8 +68,16 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
             }
         """)
 
+        self.edit_button = QtWidgets.QPushButton("(*) Edit")
+        self.edit_button.setFixedWidth(90)
+        self.edit_button.setStyleSheet("QPushButton { margin-top: 10px; }")
+
         self.main_layout.addLayout(self.header_layout)
-        self.main_layout.addWidget(self.proxy_url)
+        self.main_layout.addWidget(self.proxy_urls)
+        self.main_layout.addWidget(self.edit_button)
+
         self.main_layout.setContentsMargins(0, 0, 0, 0)
+        self.main_layout.setSpacing(10)
+        self.main_layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeft)
 
         self.setLayout(self.main_layout)
