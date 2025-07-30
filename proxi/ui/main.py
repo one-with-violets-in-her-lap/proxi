@@ -6,6 +6,7 @@ from PySide6 import QtSvgWidgets, QtWidgets
 from proxi.core.proxy_managers import ProxyManager
 from proxi.core.utils.platform import get_user_platform
 from proxi.ui.widgets.drawing_decoration import DrawingDecorationWidget
+from proxi.ui.widgets.proxy_profile import ProxyProfileCardWidget
 from proxi.ui.widgets.status_switch import StatusSwitch
 
 WINDOW_WIDTH = 460
@@ -20,9 +21,11 @@ class AppWindow(QtWidgets.QMainWindow):
         self.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
 
         self.setObjectName("mainWindow")
-
-        # TODO: come up with a better way to apply css
-        self.setStyleSheet("#mainWindow {background-color:white;}")
+        self.setStyleSheet("""
+            #mainWindow {
+                background-color: white;
+            }
+        """)
 
         self.drawing_image = DrawingDecorationWidget(self)
 
@@ -31,10 +34,15 @@ class AppWindow(QtWidgets.QMainWindow):
 
         self.status_switch = StatusSwitch(ProxyManager(get_user_platform()))
 
+        self.proxy_profile_card = ProxyProfileCardWidget()
+
         self.main_content_layout = QtWidgets.QVBoxLayout()
         self.main_content_layout.addWidget(self.logo)
         self.main_content_layout.addWidget(self.status_switch)
+        self.main_content_layout.addWidget(self.proxy_profile_card)
+
         self.main_content_layout.addStretch(0)
+        self.main_content_layout.setContentsMargins(25, 25, 25, 25)
         self.main_content_layout.setSpacing(20)
 
         self.main_widget = QtWidgets.QWidget()
