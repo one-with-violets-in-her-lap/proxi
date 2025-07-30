@@ -1,11 +1,11 @@
 from PySide6 import QtGui, QtWidgets
 
-from proxi.core.proxy_managers._base import BaseProxyManager
+from proxi.core.proxy_managers import ProxyManager
 from proxi.ui.widgets.ui_kit.switch import SwitchButton
 
 
 class StatusSwitch(QtWidgets.QWidget):
-    def __init__(self, proxy_manager: BaseProxyManager):
+    def __init__(self, proxy_manager: ProxyManager):
         super().__init__()
 
         self.proxy_manager = proxy_manager

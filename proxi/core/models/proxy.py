@@ -9,3 +9,10 @@ class SystemProxySettings:
     http_proxy: str | None
     https_proxy: str | None
     socks5_proxy: str | None
+
+
+@dataclass
+class ProxyProfile:
+    name: str
+    is_active: bool
+    settings: SystemProxySettings

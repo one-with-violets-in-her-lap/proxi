@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from proxi.core.proxy import SystemProxySettings
+from proxi.core.models.proxy import SystemProxySettings
 
 
 class BaseProxyManager(ABC):

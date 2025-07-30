@@ -2,7 +2,7 @@ import logging
 import subprocess
 import urllib.parse
 
-from proxi.core.proxy import SystemProxySettings, ProxyProtocol
+from proxi.core.models.proxy import SystemProxySettings, ProxyProtocol
 from proxi.core.proxy_managers._base import BaseProxyManager
 
 _GNOME_PROXY_TYPES_BY_PROTOCOL: dict[ProxyProtocol, str] = {
