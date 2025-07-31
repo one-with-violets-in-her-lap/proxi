@@ -7,7 +7,7 @@ from proxi.core.models.config import load_config
 from proxi.core.proxy_managers import ProxyManager
 from proxi.core.utils.platform import get_user_platform
 from proxi.ui.widgets.drawing_decoration import DrawingDecorationWidget
-from proxi.ui.widgets.proxy_profile_list import ProxyProfileList
+from proxi.ui.widgets.proxy_profile_list import ProxyProfileListWidget
 from proxi.ui.widgets.status_switch import StatusSwitch
 
 WINDOW_WIDTH = 460
@@ -35,7 +35,7 @@ class AppWindow(QtWidgets.QMainWindow):
 
         self.status_switch = StatusSwitch(proxy_manager)
 
-        self.proxy_profile_list = ProxyProfileList(proxy_manager)
+        self.proxy_profile_list = ProxyProfileListWidget(proxy_manager)
 
         self.main_content_layout = QtWidgets.QVBoxLayout()
         self.main_content_layout.addWidget(self.logo)

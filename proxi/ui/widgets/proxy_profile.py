@@ -35,7 +35,6 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
                border: 1px solid rgb(219, 219, 219);
                border-radius: 10px;
                background-color: white;
-               margin-top: 35px;
                padding: 14px 20px;
                max-width: 600px;
            }
@@ -68,9 +67,10 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
             }
         """)
 
-        self.edit_button = QtWidgets.QPushButton("(*) Edit")
+        self.edit_button = QtWidgets.QPushButton("(*) Select")
         self.edit_button.setFixedWidth(90)
         self.edit_button.setStyleSheet("QPushButton { margin-top: 10px; }")
+        self.edit_button.setVisible(not proxy_profile.is_active)
 
         self.main_layout.addLayout(self.header_layout)
         self.main_layout.addWidget(self.proxy_urls)
