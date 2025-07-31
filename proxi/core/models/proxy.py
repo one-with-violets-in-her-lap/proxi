@@ -1,18 +1,17 @@
-from dataclasses import dataclass
 from typing import Literal
+
+from pydantic import BaseModel
 
 ProxyProtocol = Literal["socks5", "http", "https"]
 
 
-@dataclass
-class SystemProxySettings:
+class SystemProxySettings(BaseModel):
     http_proxy: str | None
     https_proxy: str | None
     socks5_proxy: str | None
 
 
-@dataclass
-class ProxyProfile:
+class ProxyProfile(BaseModel):
     name: str
     is_active: bool
     settings: SystemProxySettings

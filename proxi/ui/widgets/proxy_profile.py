@@ -1,5 +1,3 @@
-from dataclasses import asdict
-
 from PySide6 import QtCore, QtGui, QtWidgets
 
 from proxi.core.models.proxy import ProxyProfile
@@ -86,5 +84,9 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
 
     def _build_proxy_urls_info_text(self, proxy_profile: ProxyProfile):
         return "\n".join(
-            [url for url in asdict(proxy_profile.settings).values() if url is not None]
+            [
+                url
+                for url in proxy_profile.settings.model_dump().values()
+                if url is not None
+            ]
         )

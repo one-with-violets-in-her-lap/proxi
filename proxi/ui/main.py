@@ -3,6 +3,7 @@ import sys
 
 from PySide6 import QtSvgWidgets, QtWidgets
 
+from proxi.core.models.config import load_config
 from proxi.core.proxy_managers import ProxyManager
 from proxi.core.utils.platform import get_user_platform
 from proxi.ui.widgets.drawing_decoration import DrawingDecorationWidget
@@ -65,7 +66,7 @@ def main():
 
     app = QtWidgets.QApplication([])
 
-    window = AppWindow(ProxyManager(get_user_platform()))
+    window = AppWindow(ProxyManager(get_user_platform(), load_config()))
     window.show()
 
     sys.exit(app.exec())
