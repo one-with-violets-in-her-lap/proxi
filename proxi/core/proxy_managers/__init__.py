@@ -56,12 +56,16 @@ class ProxyManager:
                 active_profile_index = index
 
         if (
-            profile_matching_with_settings_index
+            profile_matching_with_settings_index is not None
             and not profiles[profile_matching_with_settings_index].is_active
         ):
             _logger.warning(
                 "System proxy and app mismatch. Current profile is not active. Making it active"
             )
+
+            if active_profile_index is not None:
+                profiles[active_profile_index].is_active = False
+
             profiles[profile_matching_with_settings_index].is_active = True
 
         if profile_matching_with_settings_index is None and proxy_settings is not None:
