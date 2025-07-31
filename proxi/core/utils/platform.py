@@ -12,7 +12,7 @@ class Platform(Enum):
 
 
 _PLATFORMS_BY_DESKTOP_SESSION_VALUE: dict[str, Platform] = {
-    "plamsa": Platform.KDE_PLASMA,
+    "plasma": Platform.KDE_PLASMA,
     "gnome": Platform.GNOME,
     "cinnamon": Platform.CINNAMON,
 }
