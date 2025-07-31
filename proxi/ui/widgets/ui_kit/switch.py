@@ -12,7 +12,7 @@ from PySide6.QtGui import QColor, QPainter
 from PySide6.QtWidgets import QCheckBox
 
 
-class SwitchButton(QCheckBox):
+class AppSwitchButton(QCheckBox):
     def __init__(self, width=60):
         super().__init__()
 

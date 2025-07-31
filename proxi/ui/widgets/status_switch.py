@@ -1,7 +1,7 @@
 from PySide6 import QtGui, QtWidgets
 
 from proxi.core.proxy_managers import ProxyManager
-from proxi.ui.widgets.ui_kit.switch import SwitchButton
+from proxi.ui.widgets.ui_kit.switch import AppSwitchButton
 
 
 class StatusSwitch(QtWidgets.QWidget):
@@ -18,7 +18,7 @@ class StatusSwitch(QtWidgets.QWidget):
         self.status_switch_widget_layout.setSpacing(4)
         self.status_switch_widget_layout.setContentsMargins(0, 0, 0, 0)
 
-        self.switch = SwitchButton()
+        self.switch = AppSwitchButton()
         self.switch.setChecked(self.proxy_manager.get_is_proxy_active())
         self.switch.toggled.connect(
             lambda is_toggled: self.proxy_manager.set_is_proxy_active(is_toggled)
