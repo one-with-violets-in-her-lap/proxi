@@ -8,6 +8,9 @@ _STATUS_CIRCLE_COLORS = {
 }
 
 
+PROFILE_SELECTED_SIGNAL = QtCore.SIGNAL("profile-selected")
+
+
 class StatusCircleWidget(QtWidgets.QFrame):
     def __init__(self, active: bool):
         super().__init__()
@@ -25,6 +28,8 @@ class StatusCircleWidget(QtWidgets.QFrame):
 
 
 class ProxyProfileCardWidget(QtWidgets.QFrame):
+    profile_selected = QtCore.Signal(ProxyProfile)
+
     def __init__(self, proxy_profile: ProxyProfile):
         super().__init__()
 
@@ -67,14 +72,18 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
             }
         """)
 
-        self.edit_button = QtWidgets.QPushButton("(*) Select")
-        self.edit_button.setFixedWidth(90)
-        self.edit_button.setStyleSheet("QPushButton { margin-top: 10px; }")
-        self.edit_button.setVisible(not proxy_profile.is_active)
+        self.select_button = QtWidgets.QPushButton("(*) Select")
+        self.select_button.setFixedWidth(90)
+        self.select_button.setStyleSheet("QPushButton { margin-top: 10px; }")
+        self.select_button.setVisible(not proxy_profile.is_active)
+
+        self.select_button.clicked.connect(
+            lambda: self.profile_selected.emit(proxy_profile)
+        )
 
         self.main_layout.addLayout(self.header_layout)
         self.main_layout.addWidget(self.proxy_urls)
-        self.main_layout.addWidget(self.edit_button)
+        self.main_layout.addWidget(self.select_button)
 
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.setSpacing(10)

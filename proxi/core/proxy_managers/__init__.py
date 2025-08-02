@@ -1,7 +1,7 @@
 import logging
 
-from proxi.core.models.config import ProxiAppConfig
-from proxi.core.models.proxy import ProxyProfile
+from proxi.core.models.config import load_config, update_config
+from proxi.core.models.proxy import ProxyProfile, SystemProxySettings
 from proxi.core.proxy_managers._base import BaseProxyManager
 from proxi.core.proxy_managers._gnome import GnomeProxyManager
 from proxi.core.proxy_managers._kde import KdeProxyManager
@@ -24,13 +24,11 @@ class ProxyManager:
     (KDE/GNOME/etc.)
     """
 
-    def __init__(self, platform: Platform, config: ProxiAppConfig):
+    def __init__(self, platform: Platform):
         self.platform = platform
         self.platform_specific_proxy_manager = PROXY_MANAGERS_BY_PLATFORM[
             self.platform
         ]()
-
-        self.config = config
 
     def get_is_proxy_active(self) -> bool:
         return self.platform_specific_proxy_manager.get_is_proxy_active()
@@ -38,12 +36,20 @@ class ProxyManager:
     def set_is_proxy_active(self, is_active: bool):
         return self.platform_specific_proxy_manager.set_is_proxy_active(is_active)
 
+    def get_proxy_settings(self):
+        return self.platform_specific_proxy_manager.get_proxy_settings()
+
+    def set_proxy_settings(self, proxy_settings: SystemProxySettings):
+        self.platform_specific_proxy_manager.set_proxy_settings(proxy_settings)
+
     def get_profiles(self):
-        proxy_settings = self.platform_specific_proxy_manager.get_proxy_settings()
+        config = load_config()
 
-        profiles = self.config.proxy_profiles.copy()
+        proxy_settings = self.get_proxy_settings()
 
-        profiles = self.config.proxy_profiles.copy()
+        profiles = config.proxy_profiles.copy()
+
+        profiles = config.proxy_profiles.copy()
 
         profile_matching_with_settings_index: int | None = None
         active_profile_index: int | None = None
@@ -86,3 +92,30 @@ class ProxyManager:
         _logger.info("Proxy profiles: %s", profiles)
 
         return profiles
+
+    def set_active_profile(
+        self, profile_to_set_active: ProxyProfile
+    ) -> list[ProxyProfile]:
+        """Changes the current active profile and writes changes to the app config
+
+        :return: New list of profiles
+        """
+
+        _logger.info("Setting profile as active: %s", profile_to_set_active)
+
+        config = load_config()
+
+        for index, profile in enumerate(config.proxy_profiles):
+            if profile.is_active:
+                profile.is_active = False
+
+            if profile.settings == profile_to_set_active.settings:
+                profile.is_active = True
+                config.proxy_profiles.pop(index)
+                config.proxy_profiles.insert(0, profile)
+
+        self.set_proxy_settings(profile_to_set_active.settings)
+
+        update_config(config)
+
+        return config.proxy_profiles
