@@ -27,8 +27,9 @@ class ProxyProfileListWidget(QtWidgets.QWidget):
         self.setLayout(self.main_layout)
 
     def _select_profile(self, profile: ProxyProfile):
-        new_profiles = self.proxy_manager.set_active_profile(profile)
-        self._update_card_list(new_profiles)
+        self.proxy_manager.set_active_profile(
+            profile, do_before_settings_save=self._update_card_list
+        )
 
     def _update_card_list(self, profiles: list[ProxyProfile]):
         for card in self.profile_cards:

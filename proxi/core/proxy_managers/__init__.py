@@ -1,4 +1,5 @@
 import logging
+from typing import Callable
 
 from proxi.core.models.config import load_config, update_config
 from proxi.core.models.proxy import ProxyProfile, SystemProxySettings
@@ -94,9 +95,14 @@ class ProxyManager:
         return profiles
 
     def set_active_profile(
-        self, profile_to_set_active: ProxyProfile
+        self,
+        profile_to_set_active: ProxyProfile,
+        do_before_settings_save: Callable[[list[ProxyProfile]], None] | None = None,
     ) -> list[ProxyProfile]:
         """Changes the current active profile and writes changes to the app config
+
+        :param do_before_settings_save: Function `(new_profiles) -> None` that is
+            called before updating system proxy settings. Can be for optimistic updates in UIs
 
         :return: New list of profiles
         """
@@ -113,6 +119,9 @@ class ProxyManager:
                 profile.is_active = True
                 config.proxy_profiles.pop(index)
                 config.proxy_profiles.insert(0, profile)
+
+        if do_before_settings_save is not None:
+            do_before_settings_save(config.proxy_profiles)
 
         self.set_proxy_settings(profile_to_set_active.settings)
 
