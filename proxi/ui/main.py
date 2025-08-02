@@ -19,6 +19,7 @@ class AppWindow(QtWidgets.QMainWindow):
 
         self.setWindowTitle("Proxi")
         self.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
+        self.setMaximumHeight(WINDOW_HEIGHT)
 
         self.setObjectName("mainWindow")
         self.setStyleSheet("""

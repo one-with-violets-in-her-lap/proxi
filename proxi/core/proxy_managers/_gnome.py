@@ -2,7 +2,7 @@ import logging
 import subprocess
 import urllib.parse
 
-from proxi.core.models.proxy import SystemProxySettings, ProxyProtocol
+from proxi.core.models.proxy import ProxyProtocol, SystemProxySettings
 from proxi.core.proxy_managers._base import BaseProxyManager
 
 _GNOME_PROXY_TYPES_BY_PROTOCOL: dict[ProxyProtocol, str] = {
@@ -52,7 +52,9 @@ class GnomeProxyManager(BaseProxyManager):
         )
 
         if host == "":
-            _logger.info("Cannot find %s proxy because the host setting is empty")
+            _logger.info(
+                "Cannot find %s proxy because the host setting is empty", protocol
+            )
             return None
 
         return f"{protocol}://{host}:{port}"

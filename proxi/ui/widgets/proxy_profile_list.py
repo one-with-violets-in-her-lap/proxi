@@ -2,6 +2,7 @@ from PySide6 import QtWidgets
 
 from proxi.core.models.proxy import ProxyProfile
 from proxi.core.proxy_managers import ProxyManager
+from proxi.ui.widgets.add_profile_dialog import AddProfileDialogWidget
 from proxi.ui.widgets.proxy_profile import ProxyProfileCardWidget
 from proxi.ui.widgets.ui_kit.button import AppButtonWidget
 
@@ -13,11 +14,12 @@ class ProxyProfileListWidget(QtWidgets.QWidget):
         self.proxy_manager = proxy_manager
 
         self.main_layout = QtWidgets.QVBoxLayout()
-        self.main_layout.setContentsMargins(0, 34, 0, 0)
+        self.main_layout.setContentsMargins(0, 10, 0, 0)
         self.main_layout.setSpacing(13)
 
         self.add_button = AppButtonWidget("+")
         self.add_button.setFixedSize(30, 30)
+        self.add_button.clicked.connect(self._create_add_profile_dialog)
 
         self.main_layout.addWidget(self.add_button)
 
@@ -40,3 +42,16 @@ class ProxyProfileListWidget(QtWidgets.QWidget):
         for card in self.profile_cards:
             card.profile_selected.connect(self._select_profile)
             self.main_layout.addWidget(card)
+
+        self.update()
+
+    def _create_add_profile_dialog(self):
+        dialog = AddProfileDialogWidget()
+
+        def handle_submit(profile: ProxyProfile):
+            self._update_card_list(self.proxy_manager.add_profile(profile))
+            dialog.accept()
+
+        dialog.profile_added.connect(handle_submit)
+
+        dialog.exec()

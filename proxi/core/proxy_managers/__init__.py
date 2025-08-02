@@ -6,6 +6,7 @@ from proxi.core.models.proxy import ProxyProfile, SystemProxySettings
 from proxi.core.proxy_managers._base import BaseProxyManager
 from proxi.core.proxy_managers._gnome import GnomeProxyManager
 from proxi.core.proxy_managers._kde import KdeProxyManager
+from proxi.core.utils.errors import ProfileNameAlreadyExistsError
 from proxi.core.utils.platform import Platform
 
 PROXY_MANAGERS_BY_PLATFORM: dict[Platform, type[BaseProxyManager]] = {
@@ -124,6 +125,29 @@ class ProxyManager:
             do_before_settings_save(config.proxy_profiles)
 
         self.set_proxy_settings(profile_to_set_active.settings)
+
+        update_config(config)
+
+        return config.proxy_profiles
+
+    def add_profile(self, profile_to_add: ProxyProfile):
+        """Adds a new profile to the app config
+
+        :return: New list of profiles
+        """
+
+        config = load_config()
+
+        profiles_with_same_name = [
+            profile
+            for profile in config.proxy_profiles
+            if profile.name == profile_to_add.name
+        ]
+
+        if len(profiles_with_same_name) > 0:
+            raise ProfileNameAlreadyExistsError(profile_to_add.name)
+
+        config.proxy_profiles.append(profile_to_add)
 
         update_config(config)
 
