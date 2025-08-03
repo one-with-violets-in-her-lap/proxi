@@ -1,7 +1,7 @@
 import logging
 from typing import Callable
 
-from proxi.core.models.config import load_config, update_config
+from proxi.core.models.config import ProxiAppConfigProvider
 from proxi.core.models.proxy import ProxyProfile, SystemProxySettings
 from proxi.core.proxy_managers._base import BaseProxyManager
 from proxi.core.proxy_managers._gnome import GnomeProxyManager
@@ -26,7 +26,9 @@ class ProxyManager:
     (KDE/GNOME/etc.)
     """
 
-    def __init__(self, platform: Platform):
+    def __init__(self, platform: Platform, config: ProxiAppConfigProvider):
+        self.config_provider = config
+
         self.platform = platform
         self.platform_specific_proxy_manager = PROXY_MANAGERS_BY_PLATFORM[
             self.platform
@@ -45,7 +47,7 @@ class ProxyManager:
         self.platform_specific_proxy_manager.set_proxy_settings(proxy_settings)
 
     def get_profiles(self):
-        config = load_config()
+        config = self.config_provider.get_or_load_config()
 
         proxy_settings = self.get_proxy_settings()
 
@@ -110,7 +112,7 @@ class ProxyManager:
 
         _logger.info("Setting profile as active: %s", profile_to_set_active)
 
-        config = load_config()
+        config = self.config_provider.get_or_load_config()
 
         for index, profile in enumerate(config.proxy_profiles):
             if profile.is_active:
@@ -126,7 +128,7 @@ class ProxyManager:
 
         self.set_proxy_settings(profile_to_set_active.settings)
 
-        update_config(config)
+        self.config_provider.update_config(config)
 
         return config.proxy_profiles
 
@@ -136,7 +138,7 @@ class ProxyManager:
         :return: New list of profiles
         """
 
-        config = load_config()
+        config = self.config_provider.get_or_load_config()
 
         profiles_with_same_name = [
             profile
@@ -149,6 +151,6 @@ class ProxyManager:
 
         config.proxy_profiles.append(profile_to_add)
 
-        update_config(config)
+        self.config_provider.update_config(config)
 
         return config.proxy_profiles
