@@ -16,7 +16,7 @@ PROXY_CONFIG_CLIENTS: dict[Platform, type[BaseProxyConfigClient]] = {
 _logger = logging.getLogger(__name__)
 
 
-class CrossPlatformProxyConfig:
+class CrossPlatformProxyConfig(BaseProxyConfigClient):
     """Cross-platform proxy config manager
 
     Chooses underlying proxy config implementation depending on user platform
