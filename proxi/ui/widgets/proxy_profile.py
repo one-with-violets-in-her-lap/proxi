@@ -9,9 +9,6 @@ _STATUS_CIRCLE_COLORS = {
 }
 
 
-PROFILE_SELECTED_SIGNAL = QtCore.SIGNAL("profile-selected")
-
-
 class StatusCircleWidget(QtWidgets.QFrame):
     def __init__(self, active: bool):
         super().__init__()
@@ -30,6 +27,7 @@ class StatusCircleWidget(QtWidgets.QFrame):
 
 class ProxyProfileCardWidget(QtWidgets.QFrame):
     profile_selected = QtCore.Signal(ProxyProfile)
+    profile_deleted = QtCore.Signal(ProxyProfile)
 
     def __init__(self, proxy_profile: ProxyProfile):
         super().__init__()
@@ -74,16 +72,26 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
         """)
 
         self.select_button = AppButtonWidget("Select")
-        self.select_button.setFixedSize(90, 24)
         self.select_button.setVisible(not proxy_profile.is_active)
-
         self.select_button.clicked.connect(
             lambda: self.profile_selected.emit(proxy_profile)
         )
 
+        self.trash_can_icon = QtGui.QIcon("./assets/trash.svg")
+        self.delete_button = AppButtonWidget("", variant="danger", size="icon")
+        self.delete_button.setIcon(self.trash_can_icon)
+        self.delete_button.setVisible(not proxy_profile.is_active)
+        self.delete_button.clicked.connect(
+            lambda: self.profile_deleted.emit(proxy_profile)
+        )
+
+        self.action_buttons_layout = QtWidgets.QHBoxLayout()
+        self.action_buttons_layout.addWidget(self.select_button)
+        self.action_buttons_layout.addWidget(self.delete_button)
+
         self.main_layout.addLayout(self.header_layout)
         self.main_layout.addWidget(self.proxy_urls)
-        self.main_layout.addWidget(self.select_button)
+        self.main_layout.addLayout(self.action_buttons_layout)
 
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.setSpacing(10)

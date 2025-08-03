@@ -60,3 +60,12 @@ class ProxyProfilesService:
 
         self.app_config.update_config(config)
         self.proxy_config_client.set_proxy_settings(profile_to_set_active.settings)
+
+    def delete_profile(self, profile_to_delete: ProxyProfile):
+        config = self.app_config.get_or_load_config()
+
+        for index, profile in enumerate(config.proxy_profiles):
+            if profile.name == profile_to_delete.name:
+                config.proxy_profiles.pop(index)
+
+        self.app_config.update_config(config)

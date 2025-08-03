@@ -17,8 +17,8 @@ class ProxyProfileListWidget(QtWidgets.QWidget):
         self.main_layout.setContentsMargins(0, 10, 0, 0)
         self.main_layout.setSpacing(13)
 
-        self.add_button = AppButtonWidget("+")
-        self.add_button.setFixedSize(30, 30)
+        self.add_button = AppButtonWidget("+", size="icon")
+        self.add_button.setFixedSize(33, 33)
         self.add_button.clicked.connect(self._create_add_profile_dialog)
 
         self.main_layout.addWidget(self.add_button)
@@ -28,11 +28,6 @@ class ProxyProfileListWidget(QtWidgets.QWidget):
 
         self.setLayout(self.main_layout)
 
-    def _select_profile(self, profile: ProxyProfile):
-        self.proxy_profiles_service.set_profile_as_active(profile)
-
-        self._update_card_list(self.proxy_profiles_service.get_profiles())
-
     def _update_card_list(self, profiles: list[ProxyProfile]):
         for card in self.profile_cards:
             self.main_layout.removeWidget(card)
@@ -40,7 +35,8 @@ class ProxyProfileListWidget(QtWidgets.QWidget):
         self.profile_cards = [ProxyProfileCardWidget(profile) for profile in profiles]
 
         for card in self.profile_cards:
-            card.profile_selected.connect(self._select_profile)
+            card.profile_selected.connect(self._handle_profile_select)
+            card.profile_deleted.connect(self._handle_profile_delete)
             self.main_layout.addWidget(card)
 
         self.update()
@@ -56,3 +52,13 @@ class ProxyProfileListWidget(QtWidgets.QWidget):
         dialog.profile_added.connect(handle_submit)
 
         dialog.exec()
+
+    def _handle_profile_select(self, profile: ProxyProfile):
+        self.proxy_profiles_service.set_profile_as_active(profile)
+
+        self._update_card_list(self.proxy_profiles_service.get_profiles())
+
+    def _handle_profile_delete(self, profile: ProxyProfile):
+        self.proxy_profiles_service.delete_profile(profile)
+
+        self._update_card_list(self.proxy_profiles_service.get_profiles())

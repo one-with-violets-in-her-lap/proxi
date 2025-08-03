@@ -3,7 +3,7 @@ import subprocess
 import urllib.parse
 
 from proxi.core.models.proxy import ProxyProtocol, SystemProxySettings
-from proxi.core.proxy_config_clients._base import BaseProxyConfigClient 
+from proxi.core.proxy_config_clients._base import BaseProxyConfigClient
 
 _GNOME_PROXY_TYPES_BY_PROTOCOL: dict[ProxyProtocol, str] = {
     "http": "http",
