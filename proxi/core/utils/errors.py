@@ -6,8 +6,6 @@ class UnsupportedPlatformError(ProxiAppError):
     pass
 
 
-class ProfileNameAlreadyExistsError(ProxiAppError):
-    def __init__(self, name: str):
-        super().__init__(
-            f'Profile with name "{name}" already exists. The name must be unique'
-        )
+class ProfileAlreadyExistsError(ProxiAppError):
+    def __init__(self):
+        super().__init__("Profile with the same name or settings already exists")

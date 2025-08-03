@@ -6,7 +6,7 @@ from proxi.core.models.proxy import ProxyProfile, SystemProxySettings
 from proxi.core.proxy_managers._base import BaseProxyManager
 from proxi.core.proxy_managers._gnome import GnomeProxyManager
 from proxi.core.proxy_managers._kde import KdeProxyManager
-from proxi.core.utils.errors import ProfileNameAlreadyExistsError
+from proxi.core.utils.errors import ProfileAlreadyExistsError
 from proxi.core.utils.platform import Platform
 
 PROXY_MANAGERS_BY_PLATFORM: dict[Platform, type[BaseProxyManager]] = {
@@ -92,6 +92,12 @@ class ProxyManager:
                 profiles[active_profile_index].is_active = False
 
             profiles[profile_matching_with_settings_index].is_active = True
+            profile_matching_with_settings = profiles[
+                profile_matching_with_settings_index
+            ]
+
+            profiles.pop(profile_matching_with_settings_index)
+            profiles.insert(0, profile_matching_with_settings)
 
         if profile_matching_with_settings_index is None and proxy_settings is not None:
             _logger.warning(
@@ -150,22 +156,31 @@ class ProxyManager:
         return new_profiles
 
     def add_profile(self, profile_to_add: ProxyProfile):
-        """Adds a new profile to the app config
-
-        :return: New list of profiles
-        """
+        """Adds a new profile to the app config"""
 
         config = self.config_provider.get_or_load_config()
 
-        profiles_with_same_name = [
+        duplicate_profiles = [
             profile
             for profile in config.proxy_profiles
             if profile.name == profile_to_add.name
+            or profile.settings == profile_to_add.settings
         ]
 
-        if len(profiles_with_same_name) > 0:
-            raise ProfileNameAlreadyExistsError(profile_to_add.name)
+        if len(duplicate_profiles) > 0:
+            raise ProfileAlreadyExistsError()
 
-        config.proxy_profiles.append(profile_to_add)
+        matching_active_profiles = [
+            profile
+            for profile in self.get_profiles()
+            if profile.settings == profile_to_add.settings and profile.is_active
+        ]
+
+        if len(matching_active_profiles) > 0:
+            new_profile_as_active = profile_to_add.model_copy()
+            new_profile_as_active.is_active = True
+            config.proxy_profiles.insert(0, new_profile_as_active)
+        else:
+            config.proxy_profiles.append(profile_to_add)
 
         self.config_provider.update_config(config)
