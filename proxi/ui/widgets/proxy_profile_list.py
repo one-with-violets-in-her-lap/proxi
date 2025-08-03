@@ -1,17 +1,17 @@
 from PySide6 import QtWidgets
 
 from proxi.core.models.proxy import ProxyProfile
-from proxi.core.proxy_managers import ProxyManager
+from proxi.core.services.proxy_profiles import ProxyProfilesService
 from proxi.ui.widgets.add_profile_dialog import AddProfileDialogWidget
 from proxi.ui.widgets.proxy_profile import ProxyProfileCardWidget
 from proxi.ui.widgets.ui_kit.button import AppButtonWidget
 
 
 class ProxyProfileListWidget(QtWidgets.QWidget):
-    def __init__(self, proxy_manager: ProxyManager):
+    def __init__(self, proxy_profiles_service: ProxyProfilesService):
         super().__init__()
 
-        self.proxy_manager = proxy_manager
+        self.proxy_profiles_service = proxy_profiles_service
 
         self.main_layout = QtWidgets.QVBoxLayout()
         self.main_layout.setContentsMargins(0, 10, 0, 0)
@@ -24,14 +24,14 @@ class ProxyProfileListWidget(QtWidgets.QWidget):
         self.main_layout.addWidget(self.add_button)
 
         self.profile_cards: list[ProxyProfileCardWidget] = []
-        self._update_card_list(proxy_manager.get_profiles())
+        self._update_card_list(self.proxy_profiles_service.get_profiles())
 
         self.setLayout(self.main_layout)
 
     def _select_profile(self, profile: ProxyProfile):
-        self.proxy_manager.set_active_profile(
-            profile, do_before_settings_save=self._update_card_list
-        )
+        self.proxy_profiles_service.set_profile_as_active(profile)
+
+        self._update_card_list(self.proxy_profiles_service.get_profiles())
 
     def _update_card_list(self, profiles: list[ProxyProfile]):
         for card in self.profile_cards:
@@ -49,8 +49,8 @@ class ProxyProfileListWidget(QtWidgets.QWidget):
         dialog = AddProfileDialogWidget()
 
         def handle_submit(profile: ProxyProfile):
-            self.proxy_manager.add_profile(profile)
-            self._update_card_list(self.proxy_manager.get_profiles())
+            self.proxy_profiles_service.add_profile(profile)
+            self._update_card_list(self.proxy_profiles_service.get_profiles())
             dialog.accept()
 
         dialog.profile_added.connect(handle_submit)

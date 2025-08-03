@@ -1,11 +1,11 @@
 from PySide6 import QtGui, QtWidgets
 
-from proxi.core.proxy_managers import ProxyManager
+from proxi.core.proxy_config_clients import CrossPlatformProxyConfig
 from proxi.ui.widgets.ui_kit.switch import AppSwitchButton
 
 
 class StatusSwitch(QtWidgets.QWidget):
-    def __init__(self, proxy_manager: ProxyManager):
+    def __init__(self, proxy_manager: CrossPlatformProxyConfig):
         super().__init__()
 
         self.proxy_manager = proxy_manager

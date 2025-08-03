@@ -3,7 +3,7 @@ import subprocess
 import urllib.parse
 
 from proxi.core.models.proxy import ProxyProtocol, SystemProxySettings
-from proxi.core.proxy_managers._base import BaseProxyManager
+from proxi.core.proxy_config_clients._base import BaseProxyConfigClient 
 
 _GNOME_PROXY_TYPES_BY_PROTOCOL: dict[ProxyProtocol, str] = {
     "http": "http",
@@ -14,7 +14,7 @@ _GNOME_PROXY_TYPES_BY_PROTOCOL: dict[ProxyProtocol, str] = {
 _logger = logging.getLogger(__name__)
 
 
-class GnomeProxyManager(BaseProxyManager):
+class GnomeProxyConfig(BaseProxyConfigClient):
     def get_is_proxy_active(self):
         return self._get_gsettings_value("org.gnome.system.proxy", "mode") == "manual"
 

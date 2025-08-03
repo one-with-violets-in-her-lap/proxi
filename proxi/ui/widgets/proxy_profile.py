@@ -1,6 +1,7 @@
 from PySide6 import QtCore, QtGui, QtWidgets
 
 from proxi.core.models.proxy import ProxyProfile
+from proxi.ui.widgets.ui_kit.button import AppButtonWidget
 
 _STATUS_CIRCLE_COLORS = {
     "active": "qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #C3EE9D, stop:1 #86D441);",
@@ -72,9 +73,8 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
             }
         """)
 
-        self.select_button = QtWidgets.QPushButton("(*) Select")
-        self.select_button.setFixedWidth(90)
-        self.select_button.setStyleSheet("QPushButton { margin-top: 10px; }")
+        self.select_button = AppButtonWidget("Select")
+        self.select_button.setFixedSize(90, 24)
         self.select_button.setVisible(not proxy_profile.is_active)
 
         self.select_button.clicked.connect(
