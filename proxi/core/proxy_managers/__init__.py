@@ -1,7 +1,7 @@
 import logging
 from typing import Callable
 
-from proxi.core.models.config import ProxiAppConfigProvider
+from proxi.core.models.config import ProxiAppConfig, ProxiAppConfigProvider
 from proxi.core.models.proxy import ProxyProfile, SystemProxySettings
 from proxi.core.proxy_managers._base import BaseProxyManager
 from proxi.core.proxy_managers._gnome import GnomeProxyManager
@@ -46,12 +46,27 @@ class ProxyManager:
     def set_proxy_settings(self, proxy_settings: SystemProxySettings):
         self.platform_specific_proxy_manager.set_proxy_settings(proxy_settings)
 
-    def get_profiles(self):
-        config = self.config_provider.get_or_load_config()
+    def get_profiles(
+        self,
+        config: ProxiAppConfig | None = None,
+        proxy_settings: SystemProxySettings | None = None,
+    ):
+        """Gets profiles from app config and matches them with system settings, determining the active profile
 
-        proxy_settings = self.get_proxy_settings()
+        If the current system proxy settings can't be matched to any existing profile, creates an
+        "Unknown" profile
 
-        profiles = config.proxy_profiles.copy()
+        :param config: Lets you specify a config that the method will use instead
+            of loading it by itself
+        :param proxy_settings: Lets you specify a settings that the method will match
+            profile to instead of loading them by itself
+        """
+
+        config = self.config_provider.get_or_load_config() if config is None else config
+
+        proxy_settings = (
+            self.get_proxy_settings() if proxy_settings is None else proxy_settings
+        )
 
         profiles = config.proxy_profiles.copy()
 
@@ -123,14 +138,16 @@ class ProxyManager:
                 config.proxy_profiles.pop(index)
                 config.proxy_profiles.insert(0, profile)
 
+        new_profiles = self.get_profiles(config, profile_to_set_active.settings)
+
         if do_before_settings_save is not None:
-            do_before_settings_save(config.proxy_profiles)
+            do_before_settings_save(new_profiles)
 
         self.set_proxy_settings(profile_to_set_active.settings)
 
         self.config_provider.update_config(config)
 
-        return config.proxy_profiles
+        return new_profiles
 
     def add_profile(self, profile_to_add: ProxyProfile):
         """Adds a new profile to the app config
@@ -152,5 +169,3 @@ class ProxyManager:
         config.proxy_profiles.append(profile_to_add)
 
         self.config_provider.update_config(config)
-
-        return config.proxy_profiles

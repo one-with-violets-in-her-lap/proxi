@@ -49,7 +49,8 @@ class ProxyProfileListWidget(QtWidgets.QWidget):
         dialog = AddProfileDialogWidget()
 
         def handle_submit(profile: ProxyProfile):
-            self._update_card_list(self.proxy_manager.add_profile(profile))
+            self.proxy_manager.add_profile(profile)
+            self._update_card_list(self.proxy_manager.get_profiles())
             dialog.accept()
 
         dialog.profile_added.connect(handle_submit)
