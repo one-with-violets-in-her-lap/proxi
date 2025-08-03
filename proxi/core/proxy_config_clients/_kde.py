@@ -2,12 +2,12 @@ import os
 import subprocess
 
 from proxi.core.models.proxy import SystemProxySettings
-from proxi.core.proxy_managers._base import BaseProxyManager
+from proxi.core.proxy_config_clients._base import BaseProxyConfigClient
 
 KDE_CONFIG_PATH = os.path.expanduser("~/.config/kioslaverc")
 
 
-class KdeProxyManager(BaseProxyManager):
+class KdeProxyConfig(BaseProxyConfigClient):
     def get_is_proxy_active(self):
         proxy_type = (
             subprocess.check_output(

@@ -1,14 +1,14 @@
 from PySide6 import QtWidgets
 
 from proxi.core.models.proxy import ProxyProfile
-from proxi.core.proxy_managers import ProxyManager
+from proxi.core.proxy_config_clients import CrossPlatformProxyConfig
 from proxi.ui.widgets.add_profile_dialog import AddProfileDialogWidget
 from proxi.ui.widgets.proxy_profile import ProxyProfileCardWidget
 from proxi.ui.widgets.ui_kit.button import AppButtonWidget
 
 
 class ProxyProfileListWidget(QtWidgets.QWidget):
-    def __init__(self, proxy_manager: ProxyManager):
+    def __init__(self, proxy_manager: CrossPlatformProxyConfig):
         super().__init__()
 
         self.proxy_manager = proxy_manager

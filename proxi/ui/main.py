@@ -4,7 +4,7 @@ import sys
 from PySide6 import QtSvgWidgets, QtWidgets
 
 from proxi.core.models.config import ProxiAppConfigProvider
-from proxi.core.proxy_managers import ProxyManager
+from proxi.core.proxy_config_clients import CrossPlatformProxyConfig
 from proxi.core.utils.platform import get_user_platform
 from proxi.ui.widgets.drawing_decoration import DrawingDecorationWidget
 from proxi.ui.widgets.proxy_profile_list import ProxyProfileListWidget
@@ -15,7 +15,7 @@ WINDOW_HEIGHT = 700
 
 
 class AppWindow(QtWidgets.QMainWindow):
-    def __init__(self, proxy_manager: ProxyManager):
+    def __init__(self, proxy_manager: CrossPlatformProxyConfig):
         super().__init__()
 
         self.setWindowTitle("Proxi")
@@ -67,7 +67,7 @@ def main():
 
     app = QtWidgets.QApplication([])
 
-    window = AppWindow(ProxyManager(get_user_platform(), ProxiAppConfigProvider()))
+    window = AppWindow(CrossPlatformProxyConfig(get_user_platform(), ProxiAppConfigProvider()))
     window.show()
 
     sys.exit(app.exec())
