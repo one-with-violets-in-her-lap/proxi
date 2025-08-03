@@ -39,7 +39,7 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
                border: 1px solid rgb(219, 219, 219);
                border-radius: 10px;
                background-color: white;
-               padding: 14px 20px;
+               padding: 12px 20px;
                max-width: 600px;
            }
         """)
@@ -76,6 +76,9 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
         self.select_button.clicked.connect(
             lambda: self.profile_selected.emit(proxy_profile)
         )
+        self.select_button.setSizePolicy(
+            QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
+        )
 
         self.trash_can_icon = QtGui.QIcon("./assets/trash.svg")
         self.delete_button = AppButtonWidget("", variant="danger", size="icon")
@@ -88,6 +91,7 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
         self.action_buttons_layout = QtWidgets.QHBoxLayout()
         self.action_buttons_layout.addWidget(self.select_button)
         self.action_buttons_layout.addWidget(self.delete_button)
+        self.action_buttons_layout.setAlignment(QtGui.Qt.AlignmentFlag.AlignLeft)
 
         self.main_layout.addLayout(self.header_layout)
         self.main_layout.addWidget(self.proxy_urls)
@@ -95,7 +99,6 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
 
         self.main_layout.setContentsMargins(0, 0, 0, 0)
         self.main_layout.setSpacing(10)
-        self.main_layout.setAlignment(QtCore.Qt.AlignmentFlag.AlignLeft)
 
         self.setLayout(self.main_layout)
 
