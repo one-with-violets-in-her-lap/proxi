@@ -105,7 +105,7 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
     def _build_proxy_urls_info_text(self, proxy_profile: ProxyProfile):
         return "\n".join(
             [
-                url
+                str(url)
                 for url in proxy_profile.settings.model_dump().values()
                 if url is not None
             ]

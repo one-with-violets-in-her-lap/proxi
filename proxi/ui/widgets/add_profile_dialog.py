@@ -57,13 +57,17 @@ class AddProfileDialogWidget(QtWidgets.QDialog):
 
     def _handle_submit(self):
         self.profile_added.emit(
-            ProxyProfile(
-                name=self.profile_name_field.text(),
-                is_active=False,
-                settings=SystemProxySettings(
-                    http_proxy=self.http_proxy_field.text() or None,
-                    https_proxy=self.https_proxy_field.text() or None,
-                    socks5_proxy=self.socks5_proxy_field.text() or None,
-                ),
+            ProxyProfile.model_validate(
+                dict(
+                    name=self.profile_name_field.text(),
+                    is_active=False,
+                    settings=SystemProxySettings.model_validate(
+                        dict(
+                            http_proxy=self.http_proxy_field.text() or None,
+                            https_proxy=self.https_proxy_field.text() or None,
+                            socks5_proxy=self.socks5_proxy_field.text() or None,
+                        )
+                    ),
+                )
             )
         )

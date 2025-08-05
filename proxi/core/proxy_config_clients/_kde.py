@@ -46,14 +46,18 @@ class KdeProxyConfig(BaseProxyConfigClient):
         https_proxy = self._get_proxy_from_kde_config("httpsProxy")
         socks5_proxy = self._get_proxy_from_kde_config("socksProxy")
 
-        return SystemProxySettings(
-            http_proxy=http_proxy, https_proxy=https_proxy, socks5_proxy=socks5_proxy
+        return SystemProxySettings.model_validate(
+            dict(
+                http_proxy=http_proxy,
+                https_proxy=https_proxy,
+                socks5_proxy=socks5_proxy,
+            )
         )
 
     def set_proxy_settings(self, proxy_settings: SystemProxySettings):
-        self._set_proxy_in_kde_config("httpProxy", proxy_settings.http_proxy)
-        self._set_proxy_in_kde_config("httpsProxy", proxy_settings.https_proxy)
-        self._set_proxy_in_kde_config("socksProxy", proxy_settings.socks5_proxy)
+        self._set_proxy_in_kde_config("httpProxy", str(proxy_settings.http_proxy))
+        self._set_proxy_in_kde_config("httpsProxy", str(proxy_settings.https_proxy))
+        self._set_proxy_in_kde_config("socksProxy", str(proxy_settings.socks5_proxy))
 
     def _set_proxy_in_kde_config(self, key: str, proxy_url: str | None):
         proxy_config_value = ""

@@ -30,16 +30,18 @@ class GnomeProxyConfig(BaseProxyConfigClient):
         )
 
     def get_proxy_settings(self):
-        return SystemProxySettings(
-            http_proxy=self._get_proxy_from_gsettings("http"),
-            https_proxy=self._get_proxy_from_gsettings("https"),
-            socks5_proxy=self._get_proxy_from_gsettings("socks5"),
+        return SystemProxySettings.model_validate(
+            dict(
+                http_proxy=self._get_proxy_from_gsettings("http"),
+                https_proxy=self._get_proxy_from_gsettings("https"),
+                socks5_proxy=self._get_proxy_from_gsettings("socks5"),
+            )
         )
 
     def set_proxy_settings(self, proxy_settings):
-        self._set_proxy_in_gsettings(proxy_settings.http_proxy, "http")
-        self._set_proxy_in_gsettings(proxy_settings.https_proxy, "https")
-        self._set_proxy_in_gsettings(proxy_settings.socks5_proxy, "socks5")
+        self._set_proxy_in_gsettings(str(proxy_settings.http_proxy), "http")
+        self._set_proxy_in_gsettings(str(proxy_settings.https_proxy), "https")
+        self._set_proxy_in_gsettings(str(proxy_settings.socks5_proxy), "socks5")
 
     def _get_proxy_from_gsettings(self, protocol: ProxyProtocol):
         gnome_proxy_type = _GNOME_PROXY_TYPES_BY_PROTOCOL[protocol]

@@ -1,14 +1,14 @@
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import AnyHttpUrl, AnyUrl, BaseModel
 
 ProxyProtocol = Literal["socks5", "http", "https"]
 
 
 class SystemProxySettings(BaseModel):
-    http_proxy: str | None
-    https_proxy: str | None
-    socks5_proxy: str | None
+    http_proxy: AnyHttpUrl | None
+    https_proxy: AnyHttpUrl | None
+    socks5_proxy: AnyUrl | None
 
 
 class ProxyProfile(BaseModel):
