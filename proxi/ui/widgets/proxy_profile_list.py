@@ -2,6 +2,7 @@ from PySide6 import QtGui, QtWidgets
 
 from proxi.core.models.proxy import ProxyProfile
 from proxi.core.services.proxy_profiles import ProxyProfilesService
+from proxi.core.utils.errors import ProfileAlreadyExistsError
 from proxi.ui.widgets.add_profile_dialog import AddProfileDialogWidget
 from proxi.ui.widgets.proxy_profile import ProxyProfileCardWidget
 from proxi.ui.widgets.ui_kit.button import AppButtonWidget
@@ -54,14 +55,27 @@ class ProxyProfileListWidget(QtWidgets.QWidget):
     def _create_add_profile_dialog(self):
         dialog = AddProfileDialogWidget()
 
-        def handle_submit(profile: ProxyProfile):
-            self.proxy_profiles_service.add_profile(profile)
-            self._update_card_list(self.proxy_profiles_service.get_profiles())
-            dialog.accept()
-
-        dialog.profile_added.connect(handle_submit)
+        dialog.profile_added.connect(
+            lambda profile: self._handle_profile_add(profile, dialog)
+        )
 
         dialog.exec()
+
+    def _handle_profile_add(
+        self, profile: ProxyProfile, add_profile_dialog: AddProfileDialogWidget
+    ):
+        try:
+            self.proxy_profiles_service.add_profile(profile)
+            self._update_card_list(self.proxy_profiles_service.get_profiles())
+
+            add_profile_dialog.accept()
+        except ProfileAlreadyExistsError:
+            add_profile_dialog.show_error(
+                "Profile with the same name or settings already exists"
+            )
+        except Exception as error:
+            add_profile_dialog.show_error("An unknown error occurred")
+            raise error
 
     def _handle_profile_select(self, profile: ProxyProfile):
         self.proxy_profiles_service.set_profile_as_active(profile)

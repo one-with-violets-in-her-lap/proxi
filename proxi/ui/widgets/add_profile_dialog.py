@@ -1,6 +1,15 @@
+from pydantic import ValidationError
 from PySide6 import QtCore, QtWidgets
 
-from proxi.core.models.proxy import ProxyProfile, SystemProxySettings
+from proxi.core.models.proxy import ProxyProfile
+
+_ERROR_MESSAGES_BY_FIELD_LOC = {
+    ("name",): "Profile name is invalid",
+    ("settings", "http_proxy"): "HTTP proxy URL is invalid",
+    ("settings", "https_proxy"): "HTTPS proxy URL is invalid",
+    ("settings", "socks5_proxy"): "SOCKS5 proxy URL is invalid",
+    ("settings",): "At least one proxy must be specified",
+}
 
 
 class AddProfileDialogWidget(QtWidgets.QDialog):
@@ -49,25 +58,51 @@ class AddProfileDialogWidget(QtWidgets.QDialog):
         self.form_layout.addRow("HTTPS proxy:", self.https_proxy_field)
         self.form_layout.addRow("SOCKS5 proxy:", self.socks5_proxy_field)
 
+        self.error_label = QtWidgets.QLabel()
+        self.error_label.setStyleSheet("""
+            QLabel {
+                color: #ed5e5e;
+                font-size: 14px;
+                font-weight: 400;
+                margin-top: 10px;
+            }
+        """)
+        self.error_label.setVisible(False)
+        self.error_label.setAlignment(QtCore.Qt.AlignmentFlag.AlignRight)
+
         self.main_layout = QtWidgets.QVBoxLayout()
         self.main_layout.addLayout(self.form_layout)
         self.main_layout.addWidget(self.action_buttons_box)
+        self.main_layout.addWidget(self.error_label)
 
         self.setLayout(self.main_layout)
 
+    def show_error(self, text: str):
+        self.error_label.setText(text)
+        self.error_label.setVisible(True)
+
     def _handle_submit(self):
-        self.profile_added.emit(
-            ProxyProfile.model_validate(
-                dict(
-                    name=self.profile_name_field.text(),
-                    is_active=False,
-                    settings=SystemProxySettings.model_validate(
-                        dict(
+        try:
+            self.profile_added.emit(
+                ProxyProfile.model_validate(
+                    dict(
+                        name=self.profile_name_field.text() or None,
+                        is_active=False,
+                        settings=dict(
                             http_proxy=self.http_proxy_field.text() or None,
                             https_proxy=self.https_proxy_field.text() or None,
                             socks5_proxy=self.socks5_proxy_field.text() or None,
-                        )
-                    ),
+                        ),
+                    )
                 )
             )
-        )
+        except ValidationError as validation_error:
+            first_error = validation_error.errors()[0]
+
+            self.show_error(
+                _ERROR_MESSAGES_BY_FIELD_LOC.get(first_error["loc"])
+                or first_error["msg"]
+            )
+        except Exception as error:
+            self.show_error("An unknown error occurred")
+            raise error
