@@ -70,6 +70,9 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
                 font-size: 14px;
             }
         """)
+        self.proxy_urls.setTextInteractionFlags(
+            QtCore.Qt.TextInteractionFlag.TextSelectableByMouse
+        )
 
         self.select_button = AppButtonWidget("Select")
         self.select_button.setVisible(not proxy_profile.is_active)
