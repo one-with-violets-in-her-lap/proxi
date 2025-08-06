@@ -1,4 +1,5 @@
 import logging
+import os
 import sys
 
 from PySide6 import QtSvgWidgets, QtWidgets
@@ -7,6 +8,7 @@ from proxi.core.models.config import ProxiAppConfigProvider
 from proxi.core.proxy_config_clients import CrossPlatformProxyConfig
 from proxi.core.services.proxy_profiles import ProxyProfilesService
 from proxi.core.utils.platform import get_user_platform
+from proxi.core.utils.shell_profile import update_app_shell_profile
 from proxi.ui.widgets.drawing_decoration import DrawingDecorationWidget
 from proxi.ui.widgets.proxy_profile_list import ProxyProfileListWidget
 from proxi.ui.widgets.status_switch import StatusSwitch
@@ -68,6 +70,10 @@ def main():
         format="%(asctime)s: [%(levelname)s] %(name)s - %(message)s",
         datefmt="%m/%d/%Y %I:%M:%S %p",
         force=True,
+    )
+
+    update_app_shell_profile(
+        os.path.expanduser("~/proxi_setup.sh"), "export TEST_TEST_PROXY=http://localhost:1234"
     )
 
     app = QtWidgets.QApplication([])
