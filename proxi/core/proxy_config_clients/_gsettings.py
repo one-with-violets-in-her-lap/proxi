@@ -5,7 +5,7 @@ import urllib.parse
 from proxi.core.models.proxy import ProxyProtocol, SystemProxySettings
 from proxi.core.proxy_config_clients._base import BaseProxyConfigClient
 
-_GNOME_PROXY_TYPES_BY_PROTOCOL: dict[ProxyProtocol, str] = {
+_PROXY_TYPES_BY_PROTOCOL: dict[ProxyProtocol, str] = {
     "http": "http",
     "https": "https",
     "socks5": "socks",
@@ -14,7 +14,12 @@ _GNOME_PROXY_TYPES_BY_PROTOCOL: dict[ProxyProtocol, str] = {
 _logger = logging.getLogger(__name__)
 
 
-class GnomeProxyConfig(BaseProxyConfigClient):
+class GSettingsProxyConfig(BaseProxyConfigClient):
+    """
+    Proxy config implementation for systems with
+    [gsettings](http://www.linux-commands-examples.com/gsettings) utility
+    """
+
     def get_is_proxy_active(self):
         return self._get_gsettings_value("org.gnome.system.proxy", "mode") == "manual"
 
@@ -44,7 +49,7 @@ class GnomeProxyConfig(BaseProxyConfigClient):
         self._set_proxy_in_gsettings(str(proxy_settings.socks5_proxy), "socks5")
 
     def _get_proxy_from_gsettings(self, protocol: ProxyProtocol):
-        gnome_proxy_type = _GNOME_PROXY_TYPES_BY_PROTOCOL[protocol]
+        gnome_proxy_type = _PROXY_TYPES_BY_PROTOCOL[protocol]
 
         host = self._get_gsettings_value(
             f"org.gnome.system.proxy.{gnome_proxy_type}", "host"
@@ -70,7 +75,7 @@ class GnomeProxyConfig(BaseProxyConfigClient):
         )
 
     def _set_proxy_in_gsettings(self, proxy_url: str | None, protocol: ProxyProtocol):
-        gnome_proxy_type = _GNOME_PROXY_TYPES_BY_PROTOCOL[protocol]
+        gnome_proxy_type = _PROXY_TYPES_BY_PROTOCOL[protocol]
 
         proxy_host = ""
         proxy_port = ""

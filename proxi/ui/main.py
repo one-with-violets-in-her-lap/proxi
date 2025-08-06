@@ -6,7 +6,7 @@ from PySide6 import QtSvgWidgets, QtWidgets
 from proxi.core.models.config import ProxiAppConfigProvider
 from proxi.core.proxy_config_clients import CrossPlatformProxyConfig
 from proxi.core.services.proxy_profiles import ProxyProfilesService
-from proxi.core.utils.platform import get_user_platform
+from proxi.core.utils.platform import get_user_settings_platform
 from proxi.ui.widgets.drawing_decoration import DrawingDecorationWidget
 from proxi.ui.widgets.proxy_profile_list import ProxyProfileListWidget
 from proxi.ui.widgets.status_switch import StatusSwitch
@@ -75,7 +75,7 @@ def main():
     app = QtWidgets.QApplication([])
 
     app_config_provider = ProxiAppConfigProvider()
-    proxy_config = CrossPlatformProxyConfig(get_user_platform())
+    proxy_config = CrossPlatformProxyConfig(get_user_settings_platform())
     proxy_profiles_service = ProxyProfilesService(app_config_provider, proxy_config)
 
     window = AppWindow(proxy_config, proxy_profiles_service)

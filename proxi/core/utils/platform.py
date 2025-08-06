@@ -1,37 +1,31 @@
 import logging
-import os
+import shutil
 from enum import Enum
 
-from proxi.core.utils.errors import UnsupportedPlatformError
 
-
-class Platform(Enum):
-    KDE_PLASMA = "KDE Plasma"
-    GNOME = "GNOME"
-    CINNAMON = "Cinnamon"
-
-
-_PLATFORMS_BY_DESKTOP_SESSION_VALUE: dict[str, Platform] = {
-    "plasma": Platform.KDE_PLASMA,
-    "gnome": Platform.GNOME,
-    "cinnamon": Platform.CINNAMON,
-}
+class SettingsPlatform(Enum):
+    GSETTINGS = "GSETTINGS"
+    KDE_6_CONFIG = "KDE_6_CONFIG"
+    SHELL_ENVIRONMENT = "SHELL"
 
 
 _logger = logging.getLogger(__name__)
 
 
-def get_user_platform():
-    desktop_session = os.environ.get("DESKTOP_SESSION")
+def get_user_settings_platform():
+    gsettings_bin_path = shutil.which("gsettings")
 
-    _logger.info("Checking desktop session: %s", desktop_session)
+    if gsettings_bin_path is not None:
+        _logger.info("GSettings tool detected")
+        return SettingsPlatform.GSETTINGS
 
-    if desktop_session not in _PLATFORMS_BY_DESKTOP_SESSION_VALUE:
-        raise UnsupportedPlatformError(
-            "Your platform/OS is not supported. For now app supports Linux only "
-            + f"supports these platforms: {[platform.value for platform in Platform]}"
-        )
+    kreadconfig6_path = shutil.which("kreadconfig6")
 
-    detected_platform = _PLATFORMS_BY_DESKTOP_SESSION_VALUE[desktop_session]
-    _logger.info("Detected %s", detected_platform.value)
-    return detected_platform
+    if kreadconfig6_path is not None:
+        _logger.info("KDE 6 config tool detected")
+        return SettingsPlatform.KDE_6_CONFIG
+
+    _logger.info(
+        "No support settings utility found, falling back to basic shell environment variables"
+    )
+    return SettingsPlatform.SHELL_ENVIRONMENT

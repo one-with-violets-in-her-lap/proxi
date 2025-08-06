@@ -2,15 +2,15 @@ import logging
 
 from proxi.core.models.proxy import SystemProxySettings
 from proxi.core.proxy_config_clients._base import BaseProxyConfigClient
-from proxi.core.proxy_config_clients._gnome import GnomeProxyConfig
+from proxi.core.proxy_config_clients._gsettings import GSettingsProxyConfig
 from proxi.core.proxy_config_clients._kde import KdeProxyConfig
 from proxi.core.proxy_config_clients._shell import ShellProxyConfig
-from proxi.core.utils.platform import Platform
+from proxi.core.utils.platform import SettingsPlatform
 
-PROXY_CONFIG_CLIENTS: dict[Platform, list[type[BaseProxyConfigClient]]] = {
-    Platform.GNOME: [GnomeProxyConfig, ShellProxyConfig],
-    Platform.CINNAMON: [GnomeProxyConfig, ShellProxyConfig],
-    Platform.KDE_PLASMA: [KdeProxyConfig, ShellProxyConfig],
+PROXY_CONFIG_CLIENTS: dict[SettingsPlatform, list[type[BaseProxyConfigClient]]] = {
+    SettingsPlatform.GSETTINGS: [GSettingsProxyConfig, ShellProxyConfig],
+    SettingsPlatform.KDE_6_CONFIG: [KdeProxyConfig, ShellProxyConfig],
+    SettingsPlatform.SHELL_ENVIRONMENT: [ShellProxyConfig],
 }
 
 
@@ -24,7 +24,7 @@ class CrossPlatformProxyConfig(BaseProxyConfigClient):
     (KDE/GNOME/etc.)
     """
 
-    def __init__(self, platform: Platform):
+    def __init__(self, platform: SettingsPlatform):
         self.platform = platform
         self.platform_specific_proxy_configs = [
             config_class() for config_class in PROXY_CONFIG_CLIENTS[self.platform]
