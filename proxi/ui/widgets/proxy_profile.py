@@ -1,4 +1,4 @@
-from PySide6 import QtCore, QtGui, QtWidgets
+from PySide6 import QtCore, QtGui, QtSvgWidgets, QtWidgets
 
 from proxi.core.models.proxy import ProxyProfile
 from proxi.ui.widgets.ui_kit.button import AppButtonWidget
@@ -40,9 +40,13 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
                border-radius: 10px;
                background-color: white;
                padding: 12px 20px;
-               max-width: 600px;
+               max-width: 400px;
            }
         """)
+
+        self.globe_decoration = QtSvgWidgets.QSvgWidget("./assets/web-globe.svg")
+        self.globe_decoration.setFixedSize(156, 156)
+        self.globe_decoration.setParent(self)
 
         self.main_layout = QtWidgets.QVBoxLayout()
 
@@ -96,6 +100,14 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
         self.action_buttons_layout.addWidget(self.delete_button)
         self.action_buttons_layout.setAlignment(QtGui.Qt.AlignmentFlag.AlignLeft)
 
+        if not proxy_profile.is_active:
+            self.globe_decoration.setGraphicsEffect(
+                QtWidgets.QGraphicsOpacityEffect(self, opacity=0.5)
+            )
+            self.profile_title.setGraphicsEffect(
+                QtWidgets.QGraphicsOpacityEffect(self, opacity=0.7)
+            )
+
         self.main_layout.addLayout(self.header_layout)
         self.main_layout.addWidget(self.proxy_urls)
         self.main_layout.addLayout(self.action_buttons_layout)
@@ -104,6 +116,10 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
         self.main_layout.setSpacing(10)
 
         self.setLayout(self.main_layout)
+
+        self.globe_decoration.move(
+            230, self.sizeHint().height() - self.globe_decoration.height() // 2
+        )
 
     def _build_proxy_urls_info_text(self, proxy_profile: ProxyProfile):
         return "\n".join(

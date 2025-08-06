@@ -11,7 +11,7 @@ from proxi.ui.widgets.drawing_decoration import DrawingDecorationWidget
 from proxi.ui.widgets.proxy_profile_list import ProxyProfileListWidget
 from proxi.ui.widgets.status_switch import StatusSwitch
 
-WINDOW_WIDTH = 460
+WINDOW_MIN_WIDTH = 460
 WINDOW_HEIGHT = 700
 
 
@@ -24,8 +24,10 @@ class AppWindow(QtWidgets.QMainWindow):
         super().__init__()
 
         self.setWindowTitle("Proxi")
-        self.resize(WINDOW_WIDTH, WINDOW_HEIGHT)
+
+        self.resize(WINDOW_MIN_WIDTH, WINDOW_HEIGHT)
         self.setMaximumHeight(WINDOW_HEIGHT)
+        self.setMinimumWidth(460)
 
         self.setObjectName("mainWindow")
         self.setStyleSheet("""

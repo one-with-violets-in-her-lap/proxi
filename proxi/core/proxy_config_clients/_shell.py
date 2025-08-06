@@ -22,7 +22,6 @@ class ShellProxyConfig(BaseProxyConfigClient):
             setup_script_content = setup_script_read_stream.read()
 
             with open(SHELL_SETUP_SCRIPT_PATH, "wt") as setup_script_write_stream:
-                print(setup_script_content)
                 if is_active:
                     setup_script_write_stream.write(
                         setup_script_content.replace("# export", "export")
