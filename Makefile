@@ -10,7 +10,3 @@ lint:
 type-check:
 	uv run pyright .
 
-full-check:
-	make format
-	make lint
-	make type-check
