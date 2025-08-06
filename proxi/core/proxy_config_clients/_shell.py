@@ -13,9 +13,9 @@ class ShellProxyConfig(BaseProxyConfigClient):
             commented_lines = [line for line in lines if line.startswith("#")]
 
             if len(commented_lines) == len(lines):
-                return False 
+                return False
             else:
-                return True 
+                return True
 
     def set_is_proxy_active(self, is_active: bool):
         with open(SHELL_SETUP_SCRIPT_PATH, "rt") as setup_script_read_stream:
