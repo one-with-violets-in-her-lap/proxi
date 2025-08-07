@@ -4,11 +4,13 @@ version = "0.1.0"
 description = "Proxy preferences manager"
 readme = "README.md"
 license = "MIT"
-repository = "https://github.com/one-with-violets-in-her-lap/proxi"
 requires-python = ">=3.13"
 dependencies = [
     "pydantic>=2.11.7",
 ]
+
+[project.urls]
+Repository = "https://github.com/one-with-violets-in-her-lap/proxi"
 
 [project.optional-dependencies]
 ui = [
@@ -20,3 +22,14 @@ dev = [
     "pyright>=1.1.403",
     "ruff>=0.12.5",
 ]
+
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel.force-include]
+"assets" = "./assets"
+
+[tool.hatch.build.targets.wheel]
+packages = ["proxi"]
+
