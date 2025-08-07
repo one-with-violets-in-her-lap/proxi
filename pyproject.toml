@@ -1,11 +1,17 @@
 [project]
 name = "proxi"
 version = "0.1.0"
-description = "Add your description here"
+description = "Proxy preferences manager"
 readme = "README.md"
+license = "MIT"
+repository = "https://github.com/one-with-violets-in-her-lap/proxi"
 requires-python = ">=3.13"
 dependencies = [
     "pydantic>=2.11.7",
+]
+
+[project.optional-dependencies]
+ui = [
     "pyside6>=6.9.1",
 ]
 
