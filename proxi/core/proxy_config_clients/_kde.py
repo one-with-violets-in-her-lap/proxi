@@ -63,7 +63,7 @@ class KdeProxyConfig(BaseProxyConfigClient):
         proxy_config_value = ""
 
         if proxy_url is not None:
-            protocol, host, port = proxy_url.split(":")
+            protocol, host, port = proxy_url.removesuffix("/").split(":")
             proxy_config_value = f"{protocol}:{host} {port}"
 
         proxy_update_result = subprocess.run(
