@@ -1,4 +1,4 @@
-![Proxi logo](./logo.png)
+![Proxi logo](./readme-assets/logo.png)
 
 # Proxi
 
@@ -15,3 +15,9 @@ curl ifconfig.me
 # Disabling a proxy for a specific app
 HTTPS_PROXY="" wget https://example.com
 ```
+
+![Screenshot of the Proxi app interface showing proxy profiles named 'work',
+'browsing', and 'profile 4'. The 'work' profile is active with proxy addresses listed
+in HTTP, HTTPS, and SOCKS5 formats. A toggle switch indicates that proxy preferences are enabled.
+Cartoon-style characters are drawn at the top right corner.](./readme-assets/logo.png)
+
