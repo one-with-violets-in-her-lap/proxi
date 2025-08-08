@@ -1,5 +1,7 @@
 from PySide6 import QtGui, QtWidgets
 
+from proxi.ui.executable_path import build_path_from_executable
+
 
 class DrawingDecorationWidget(QtWidgets.QLabel):
     def __init__(self, parent_widget: QtWidgets.QWidget):
@@ -8,7 +10,7 @@ class DrawingDecorationWidget(QtWidgets.QLabel):
         self.parent_widget = parent_widget
 
         self.setFixedSize(147, 232)
-        self.setPixmap(QtGui.QPixmap("./assets/drawing.jpg"))
+        self.setPixmap(QtGui.QPixmap(build_path_from_executable("assets/drawing.jpg")))
         self.move(parent_widget.width() - self.width() - 20, 20)
 
     def update_position_on_parent_resize(self):

@@ -1,6 +1,7 @@
 from PySide6 import QtCore, QtGui, QtSvgWidgets, QtWidgets
 
 from proxi.core.models.proxy import ProxyProfile
+from proxi.ui.executable_path import build_path_from_executable
 from proxi.ui.widgets.ui_kit.button import AppButtonWidget
 
 _STATUS_CIRCLE_COLORS = {
@@ -44,7 +45,9 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
            }
         """)
 
-        self.globe_decoration = QtSvgWidgets.QSvgWidget("./assets/web-globe.svg")
+        self.globe_decoration = QtSvgWidgets.QSvgWidget(
+            build_path_from_executable("assets/web-globe.svg")
+        )
         self.globe_decoration.setFixedSize(156, 156)
         self.globe_decoration.setParent(self)
 
@@ -87,7 +90,10 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
             QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
         )
 
-        self.trash_can_icon = QtGui.QIcon("./assets/trash.svg")
+        self.trash_can_icon = QtGui.QIcon(
+            build_path_from_executable("assets/trash.svg")
+        )
+
         self.delete_button = AppButtonWidget("", variant="danger", size="icon")
         self.delete_button.setIcon(self.trash_can_icon)
         self.delete_button.setVisible(not proxy_profile.is_active)

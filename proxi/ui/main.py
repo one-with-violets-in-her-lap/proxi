@@ -7,6 +7,7 @@ from proxi.core.models.config import ProxiAppConfigProvider
 from proxi.core.proxy_config_clients import CrossPlatformProxyConfig
 from proxi.core.services.proxy_profiles import ProxyProfilesService
 from proxi.core.utils.platform import get_user_settings_platform
+from proxi.ui.executable_path import build_path_from_executable
 from proxi.ui.widgets.drawing_decoration import DrawingDecorationWidget
 from proxi.ui.widgets.proxy_profile_list import ProxyProfileListWidget
 from proxi.ui.widgets.status_switch import StatusSwitch
@@ -38,7 +39,9 @@ class AppWindow(QtWidgets.QMainWindow):
 
         self.drawing_image = DrawingDecorationWidget(self)
 
-        self.logo = QtSvgWidgets.QSvgWidget("./assets/logo-light-theme.svg")
+        self.logo = QtSvgWidgets.QSvgWidget(
+            build_path_from_executable("assets/logo-light-theme.svg")
+        )
         self.logo.setFixedSize(96, 56)
 
         self.status_switch = StatusSwitch(proxy_config)

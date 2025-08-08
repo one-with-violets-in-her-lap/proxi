@@ -10,3 +10,6 @@ lint:
 type-check:
 	uv run pyright .
 
+build-ui-exe:
+	uv run pyinstaller --onefile --add-data ./assets:./assets ./proxi/ui/main.py
+
