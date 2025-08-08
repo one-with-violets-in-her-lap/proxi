@@ -17,7 +17,7 @@ _logger = logging.getLogger(__name__)
 class GSettingsProxyConfig(BaseProxyConfigClient):
     """
     Proxy config implementation for systems with
-    [gsettings](http://www.linux-commands-examples.com/gsettings) utility
+    [gsettings](http://www.linux-commands-examples.com/gsettings) utility (commonly GNOME)
     """
 
     def get_is_proxy_active(self):
