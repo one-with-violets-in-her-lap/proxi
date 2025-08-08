@@ -1,6 +1,7 @@
 import os
 import subprocess
 
+from proxi.core.utils.url_parsing import get_origin_and_port
 from proxi.core.models.proxy import SystemProxySettings
 from proxi.core.proxy_config_clients._base import BaseProxyConfigClient
 
@@ -63,8 +64,8 @@ class KdeProxyConfig(BaseProxyConfigClient):
         proxy_config_value = ""
 
         if proxy_url is not None:
-            protocol, host, port = proxy_url.removesuffix("/").split(":")
-            proxy_config_value = f"{protocol}:{host} {port}"
+            origin, port = get_origin_and_port(proxy_url)
+            proxy_config_value = f"{origin} {port}"
 
         proxy_update_result = subprocess.run(
             [

@@ -1,9 +1,9 @@
 import logging
 import subprocess
-import urllib.parse
 
 from proxi.core.models.proxy import ProxyProtocol, SystemProxySettings
 from proxi.core.proxy_config_clients._base import BaseProxyConfigClient
+from proxi.core.utils.url_parsing import get_origin_and_port
 
 _PROXY_TYPES_BY_PROTOCOL: dict[ProxyProtocol, str] = {
     "http": "http",
@@ -78,13 +78,10 @@ class GSettingsProxyConfig(BaseProxyConfigClient):
         gnome_proxy_type = _PROXY_TYPES_BY_PROTOCOL[protocol]
 
         proxy_host = ""
-        proxy_port = ""
+        proxy_port = None
 
         if proxy_url is not None:
-            parsed_url = urllib.parse.urlparse(proxy_url)
-            netloc_parts = parsed_url.netloc.rpartition(":")
-            proxy_host = netloc_parts[0]
-            proxy_port = netloc_parts[-1]
+            proxy_host, proxy_port = get_origin_and_port(proxy_url)
 
         proxy_host_update_result = subprocess.run(
             [
@@ -102,7 +99,7 @@ class GSettingsProxyConfig(BaseProxyConfigClient):
                 "set",
                 f"org.gnome.system.proxy.{gnome_proxy_type}",
                 "port",
-                "0" if proxy_port == "" else str(proxy_port),
+                "0" if proxy_port is None else str(proxy_port),
             ]
         )
 
