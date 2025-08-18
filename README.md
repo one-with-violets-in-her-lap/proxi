@@ -36,7 +36,25 @@ Other Linux systems may also work, but can require additional setup
 
 ## Installation
 
-Install an [executable](https://github.com/one-with-violets-in-her-lap/proxi/releases/latest) and launch it
+Install an [archive with an executable](https://github.com/one-with-violets-in-her-lap/proxi/releases/latest) and extract it:
+
+```shell
+tar -xf ./proxi.tar.gz
+```
+
+You can run it like that:
+
+```shell
+./proxi/proxi
+```
+
+To make it more convenient, add the binary to your shell PATH:
+
+`~/.bashrc` (example):
+
+```shell
+PATH=$PATH:/mnt/1-tb-AGI1K0GIMAI/apps/proxi
+```
 
 ### Integration with shell and unsupported systems
 
@@ -50,7 +68,6 @@ if [[ -e ~/proxi_setup.sh ]]; then
 fi
 ```
 
-> You can also use this script to integrate Proxi on unsupported *[WM]: Window manager
-> or *[DE]: Desktop environment by running it on startup (e.g. ~/.xsessionrc)
+> :eyes: You can also use this script to integrate Proxi on unsupported WM or DE by running it on startup (e.g. ~/.xsessionrc)
 
 TODO: run from source
