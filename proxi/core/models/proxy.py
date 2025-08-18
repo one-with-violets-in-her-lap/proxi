@@ -24,7 +24,11 @@ class SystemProxySettings(BaseModel):
         return self
 
 
-class ProxyProfile(BaseModel):
+class ProxyProfileInput(BaseModel):
     name: str
     is_active: bool
     settings: SystemProxySettings
+
+
+class ProxyProfile(ProxyProfileInput):
+    id: int

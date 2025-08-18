@@ -1,7 +1,7 @@
 from pydantic import ValidationError
 from PySide6 import QtCore, QtWidgets
 
-from proxi.core.models.proxy import ProxyProfile
+from proxi.core.models.proxy import ProxyProfile, ProxyProfileInput
 
 _ERROR_MESSAGES_BY_FIELD_LOC = {
     ("name",): "Profile name is invalid",
@@ -12,16 +12,20 @@ _ERROR_MESSAGES_BY_FIELD_LOC = {
 }
 
 
-class AddProfileDialogWidget(QtWidgets.QDialog):
-    profile_added = QtCore.Signal(ProxyProfile)
+class ProfileFormDialogWidget(QtWidgets.QDialog):
+    profile_submit = QtCore.Signal(ProxyProfileInput)
 
-    def __init__(self):
+    def __init__(self, proxy_profile: ProxyProfile | None = None):
         super().__init__()
 
-        self.setWindowTitle("Add profile")
+        self.setWindowTitle(
+            "New profile" if proxy_profile is None else proxy_profile.name
+        )
 
         self.setContentsMargins(20, 20, 20, 20)
         self.resize(400, 200)
+
+        self.proxy_profile = proxy_profile
 
         self.action_buttons_box = QtWidgets.QDialogButtonBox()
 
@@ -38,18 +42,37 @@ class AddProfileDialogWidget(QtWidgets.QDialog):
         self.action_buttons_box.rejected.connect(self.reject)
         self.action_buttons_box.accepted.connect(self.accept)
 
+        http_proxy = ""
+        if proxy_profile is not None and proxy_profile.settings.http_proxy is not None:
+            http_proxy = str(proxy_profile.settings.http_proxy)
+
+        https_proxy = ""
+        if proxy_profile is not None and proxy_profile.settings.https_proxy is not None:
+            https_proxy = str(proxy_profile.settings.https_proxy)
+
+        socks5_proxy = ""
+        if (
+            proxy_profile is not None
+            and proxy_profile.settings.socks5_proxy is not None
+        ):
+            socks5_proxy = str(proxy_profile.settings.socks5_proxy)
+
         self.http_proxy_field = QtWidgets.QLineEdit(
-            placeholderText="http://0.0.0.0:8000"
+            placeholderText="http://0.0.0.0:8000",
+            text=http_proxy,
         )
         self.https_proxy_field = QtWidgets.QLineEdit(
-            placeholderText="https://0.0.0.0:8000"
+            placeholderText="https://0.0.0.0:8000",
+            text=https_proxy,
         )
         self.socks5_proxy_field = QtWidgets.QLineEdit(
-            placeholderText="socks5://0.0.0.0:8000"
+            placeholderText="socks5://0.0.0.0:8000",
+            text=socks5_proxy,
         )
 
         self.profile_name_field = QtWidgets.QLineEdit(
             placeholderText="Work",
+            text=proxy_profile.name if proxy_profile is not None else "",
         )
 
         self.form_layout = QtWidgets.QFormLayout()
@@ -83,11 +106,13 @@ class AddProfileDialogWidget(QtWidgets.QDialog):
 
     def _handle_submit(self):
         try:
-            self.profile_added.emit(
-                ProxyProfile.model_validate(
+            self.profile_submit.emit(
+                ProxyProfileInput.model_validate(
                     dict(
                         name=self.profile_name_field.text() or None,
-                        is_active=False,
+                        is_active=self.proxy_profile.is_active
+                        if self.proxy_profile is not None
+                        else False,
                         settings=dict(
                             http_proxy=self.http_proxy_field.text() or None,
                             https_proxy=self.https_proxy_field.text() or None,

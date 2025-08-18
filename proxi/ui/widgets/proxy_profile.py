@@ -29,6 +29,7 @@ class StatusCircleWidget(QtWidgets.QFrame):
 class ProxyProfileCardWidget(QtWidgets.QFrame):
     profile_selected = QtCore.Signal(ProxyProfile)
     profile_deleted = QtCore.Signal(ProxyProfile)
+    profile_edit_requested = QtCore.Signal(ProxyProfile)
 
     def __init__(self, proxy_profile: ProxyProfile):
         super().__init__()
@@ -90,12 +91,22 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
             QtWidgets.QSizePolicy.Policy.Fixed, QtWidgets.QSizePolicy.Policy.Fixed
         )
 
+        self.edit_icon = QtGui.QIcon(build_path_from_executable("assets/settings.svg"))
+
+        self.edit_button = AppButtonWidget("", size="icon")
+        self.edit_button.setToolTip("Edit")
+        self.edit_button.setIcon(self.edit_icon)
+        self.edit_button.clicked.connect(
+            lambda: self.profile_edit_requested.emit(proxy_profile)
+        )
+
         self.trash_can_icon = QtGui.QIcon(
             build_path_from_executable("assets/trash.svg")
         )
 
         self.delete_button = AppButtonWidget("", variant="danger", size="icon")
         self.delete_button.setIcon(self.trash_can_icon)
+        self.delete_button.setToolTip("Delete")
         self.delete_button.setVisible(not proxy_profile.is_active)
         self.delete_button.clicked.connect(
             lambda: self.profile_deleted.emit(proxy_profile)
@@ -103,6 +114,7 @@ class ProxyProfileCardWidget(QtWidgets.QFrame):
 
         self.action_buttons_layout = QtWidgets.QHBoxLayout()
         self.action_buttons_layout.addWidget(self.select_button)
+        self.action_buttons_layout.addWidget(self.edit_button)
         self.action_buttons_layout.addWidget(self.delete_button)
         self.action_buttons_layout.setAlignment(QtGui.Qt.AlignmentFlag.AlignLeft)
 

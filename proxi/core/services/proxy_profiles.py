@@ -1,7 +1,6 @@
 from proxi.core.models.config import ProxiAppConfigProvider
-from proxi.core.models.proxy import ProxyProfile
+from proxi.core.models.proxy import ProxyProfile, ProxyProfileInput
 from proxi.core.proxy_config_clients._base import BaseProxyConfigClient
-from proxi.core.utils.errors import ProfileAlreadyExistsError
 
 
 class ProxyProfilesService:
@@ -29,20 +28,18 @@ class ProxyProfilesService:
     def get_profiles(self):
         return self.app_config.get_or_load_config().proxy_profiles
 
-    def add_profile(self, new_profile: ProxyProfile):
+    def add_profile(self, new_profile: ProxyProfileInput):
         config = self.app_config.get_or_load_config()
 
-        same_profiles = [
-            profile
-            for profile in config.proxy_profiles
-            if profile.name == new_profile.name
-            or profile.settings == new_profile.settings
-        ]
+        last_profile_id = (
+            config.proxy_profiles[-1].id if len(config.proxy_profiles) > 0 else 0
+        )
 
-        if len(same_profiles) > 0:
-            raise ProfileAlreadyExistsError()
-
-        config.proxy_profiles.append(new_profile)
+        config.proxy_profiles.append(
+            ProxyProfile.model_validate(
+                {**new_profile.model_dump(), "id": last_profile_id + 1}
+            )
+        )
 
         self.app_config.update_config(config)
 
@@ -67,5 +64,19 @@ class ProxyProfilesService:
         for index, profile in enumerate(config.proxy_profiles):
             if profile.name == profile_to_delete.name:
                 config.proxy_profiles.pop(index)
+
+        self.app_config.update_config(config)
+
+    def update_profile(
+        self, target_profile: ProxyProfile, new_profile: ProxyProfileInput
+    ):
+        print(new_profile)
+        config = self.app_config.get_or_load_config()
+
+        for index, profile in enumerate(config.proxy_profiles):
+            if profile.id == target_profile.id:
+                config.proxy_profiles[index] = ProxyProfile(
+                    id=target_profile.id, **new_profile.model_dump()
+                )
 
         self.app_config.update_config(config)

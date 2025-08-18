@@ -1,9 +1,9 @@
 from PySide6 import QtGui, QtWidgets
 
-from proxi.core.models.proxy import ProxyProfile
+from proxi.core.models.proxy import ProxyProfile, ProxyProfileInput
 from proxi.core.services.proxy_profiles import ProxyProfilesService
 from proxi.core.utils.errors import ProfileAlreadyExistsError
-from proxi.ui.widgets.add_profile_dialog import AddProfileDialogWidget
+from proxi.ui.widgets.profile_form_dialog import ProfileFormDialogWidget
 from proxi.ui.widgets.proxy_profile import ProxyProfileCardWidget
 from proxi.ui.widgets.ui_kit.button import AppButtonWidget
 from proxi.ui.widgets.ui_kit.scroll_area import AppScrollArea
@@ -48,21 +48,33 @@ class ProxyProfileListWidget(QtWidgets.QWidget):
         for card in self.profile_cards:
             card.profile_selected.connect(self._handle_profile_select)
             card.profile_deleted.connect(self._handle_profile_delete)
+            card.profile_edit_requested.connect(self._create_edit_profile_dialog)
             self.profile_list_layout.addWidget(card)
 
         self.profile_list_scroll_area.update()
 
     def _create_add_profile_dialog(self):
-        dialog = AddProfileDialogWidget()
+        dialog = ProfileFormDialogWidget()
 
-        dialog.profile_added.connect(
+        dialog.profile_submit.connect(
             lambda profile: self._handle_profile_add(profile, dialog)
         )
 
         dialog.exec()
 
+    def _create_edit_profile_dialog(self, profile_to_edit: ProxyProfile):
+        dialog = ProfileFormDialogWidget(profile_to_edit)
+
+        dialog.profile_submit.connect(
+            lambda new_profile: self._handle_profile_edit(
+                profile_to_edit, new_profile, dialog
+            )
+        )
+
+        dialog.exec()
+
     def _handle_profile_add(
-        self, profile: ProxyProfile, add_profile_dialog: AddProfileDialogWidget
+        self, profile: ProxyProfileInput, add_profile_dialog: ProfileFormDialogWidget
     ):
         try:
             self.proxy_profiles_service.add_profile(profile)
@@ -86,3 +98,20 @@ class ProxyProfileListWidget(QtWidgets.QWidget):
         self.proxy_profiles_service.delete_profile(profile)
 
         self._update_card_list(self.proxy_profiles_service.get_profiles())
+
+    def _handle_profile_edit(
+        self,
+        target_profile: ProxyProfile,
+        new_profile: ProxyProfileInput,
+        dialog: ProfileFormDialogWidget,
+    ):
+        try:
+            self.proxy_profiles_service.update_profile(target_profile, new_profile)
+            self._update_card_list(self.proxy_profiles_service.get_profiles())
+
+            dialog.accept()
+        except ProfileAlreadyExistsError:
+            dialog.show_error("Profile with the same name or settings already exists")
+        except Exception as error:
+            dialog.show_error("An unknown error occurred")
+            raise error
