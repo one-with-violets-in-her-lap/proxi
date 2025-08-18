@@ -1,5 +1,8 @@
-start:
+run-ui:
 	uv run python -m proxi.ui.main
+
+run-cli:
+	uv run python -m proxi.cli.main
 
 format:
 	uv run ruff format

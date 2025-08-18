@@ -18,6 +18,9 @@ ui = [
 ]
 
 [dependency-groups]
+cli = [
+    "click>=8.2.1",
+]
 dev = [
     "pyinstaller>=6.15.0",
     "pyright>=1.1.403",
