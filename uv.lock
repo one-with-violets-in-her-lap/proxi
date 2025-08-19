@@ -107,14 +107,14 @@ dependencies = [
 ]
 
 [package.optional-dependencies]
+cli = [
+    { name = "click" },
+]
 ui = [
     { name = "pyside6" },
 ]
 
 [package.dev-dependencies]
-cli = [
-    { name = "click" },
-]
 dev = [
     { name = "pyinstaller" },
     { name = "pyright" },
@@ -124,13 +124,13 @@ dev = [
 
 [package.metadata]
 requires-dist = [
+    { name = "click", marker = "extra == 'cli'", specifier = ">=8.2.1" },
     { name = "pydantic", specifier = ">=2.11.7" },
     { name = "pyside6", marker = "extra == 'ui'", specifier = ">=6.9.1" },
 ]
-provides-extras = ["ui"]
+provides-extras = ["ui", "cli"]
 
 [package.metadata.requires-dev]
-cli = [{ name = "click", specifier = ">=8.2.1" }]
 dev = [
     { name = "pyinstaller", specifier = ">=6.15.0" },
     { name = "pyright", specifier = ">=1.1.403" },

@@ -6,6 +6,7 @@ from pydantic import ValidationError
 from proxi.cli.commands.utils.errors import CliError
 from proxi.cli.context import CliContext
 from proxi.core.models.proxy import ProxyProfile, ProxyProfileInput
+from proxi.core.utils.errors import ProfileAlreadyExistsError
 
 _ERROR_MESSAGES_BY_FIELD_LOC = {
     ("name",): "Profile name is invalid",
@@ -106,9 +107,11 @@ def _handle_create_profile_command(
         milliseconds_took = (timeit.default_timer() - start_seconds_time) * 1000
 
         click.echo(
-            "+ Profile created     "
-            + click.style(f"({milliseconds_took:.1f} ms)", dim=True)
+            "+ Profile created"
+            + click.style(f"\t({milliseconds_took:.1f} ms)", dim=True)
         )
+    except ProfileAlreadyExistsError:
+        raise CliError(f'Profile with name "{name}" already exists')
     except ValidationError as error:
         first_error = error.errors()[0]
 
@@ -118,11 +121,25 @@ def _handle_create_profile_command(
 
 
 @profiles_commands.command("delete")
-@click.argument("profile_id", required=True, type=click.INT)
-def _handle_profile_delete_command(context: click.Context, profile_id: int):
-    try:
-        cli_context: CliContext = context.obj
+@click.pass_context
+@click.argument("name", required=True)
+def _handle_profile_delete_command(context: click.Context, name: str):
+    start_seconds_time = timeit.default_timer()
 
-        cli_context["proxy_profiles_service"].delete_profile(profile_id)
-    except:
-        pass
+    cli_context: CliContext = context.obj
+
+    profiles = cli_context["proxy_profiles_service"].get_profiles()
+    profiles_to_delete = [profile for profile in profiles if profile.name == name]
+
+    if len(profiles_to_delete) == 0:
+        raise CliError(f"Profile with name {name} cannot be found")
+
+    cli_context["proxy_profiles_service"].delete_profile(profiles_to_delete[0].id)
+
+    milliseconds_took = (timeit.default_timer() - start_seconds_time) * 1000
+
+    click.echo(
+        click.style("-", fg="red")
+        + " Profile deleted"
+        + click.style(f"\t({milliseconds_took:.1f} ms)", dim=True)
+    )
