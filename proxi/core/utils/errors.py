@@ -8,9 +8,8 @@ class UnsupportedPlatformError(ProxiAppError):
 
 class ProfileAlreadyExistsError(ProxiAppError):
     def __init__(self):
-        super().__init__("Profile with the same name or settings already exists")
+        super().__init__("Profile with the same name already exists")
 
 
 class NotFoundError(ProxiAppError):
-    def __init__(self):
-        pass
+    pass
