@@ -120,6 +120,78 @@ def _handle_create_profile_command(
         )
 
 
+@profiles_commands.command("update", help="Update a proxy profile")
+@click.argument("name", required=True)
+@click.option("--http", "http_proxy")
+@click.option("--https", "https_proxy")
+@click.option("--socks5", "socks5_proxy")
+@click.pass_context
+def _handle_create_profile_command(
+    context: click.Context,
+    name: str,
+    http_proxy: str | None,
+    https_proxy: str | None,
+    socks5_proxy: str | None,
+):
+    start_seconds_time = timeit.default_timer()
+
+    cli_context: CliContext = context.obj
+
+    matching_profiles = [
+        profile
+        for profile in cli_context["proxy_profiles_service"].get_profiles()
+        if profile.name == name
+    ]
+
+    if len(matching_profiles) == 0:
+        raise CliError(f'Profile with name "{name}" does not exist')
+
+    target_profile = matching_profiles[0]
+
+    try:
+        new_proxy_profile = ProxyProfileInput.model_validate(
+            {
+                "name": name,
+                "is_active": False,
+                "settings": {
+                    "http_proxy": http_proxy,
+                    "https_proxy": https_proxy,
+                    "socks5_proxy": socks5_proxy,
+                },
+            }
+        )
+
+        if new_proxy_profile.settings.http_proxy is None:
+            new_proxy_profile.settings.http_proxy = target_profile.settings.http_proxy
+
+        if new_proxy_profile.settings.https_proxy is None:
+            new_proxy_profile.settings.https_proxy = target_profile.settings.https_proxy
+
+        if new_proxy_profile.settings.socks5_proxy is None:
+            new_proxy_profile.settings.socks5_proxy = (
+                target_profile.settings.socks5_proxy
+            )
+
+        cli_context["proxy_profiles_service"].update_profile(
+            matching_profiles[0].id, new_proxy_profile
+        )
+
+        milliseconds_took = (timeit.default_timer() - start_seconds_time) * 1000
+
+        click.echo(
+            "+ Profile updated"
+            + click.style(f"\t({milliseconds_took:.1f} ms)", dim=True)
+        )
+    except ProfileAlreadyExistsError:
+        raise CliError(f'Profile with name "{name}" already exists')
+    except ValidationError as error:
+        first_error = error.errors()[0]
+
+        raise CliError(
+            _ERROR_MESSAGES_BY_FIELD_LOC.get(first_error["loc"]) or first_error["msg"]
+        )
+
+
 @profiles_commands.command("delete")
 @click.pass_context
 @click.argument("name", required=True)
