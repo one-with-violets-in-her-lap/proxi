@@ -58,12 +58,15 @@ class ProxyProfilesService:
         self.app_config.update_config(config)
         self.proxy_config_client.set_proxy_settings(profile_to_set_active.settings)
 
-    def delete_profile(self, profile_to_delete: ProxyProfile):
+    def delete_profile(self, profile_id: int):
         config = self.app_config.get_or_load_config()
 
-        for index, profile in enumerate(config.proxy_profiles):
-            if profile.name == profile_to_delete.name:
-                config.proxy_profiles.pop(index)
+        indices_to_delete = [index for index, profile in enumerate(config.proxy_profiles) if profile.id == profile_id]
+
+        if len(indices_to_delete) == 0:
+            raise Exception('Profile not found')
+
+        config.proxy_profiles.pop(indices_to_delete[0])
 
         self.app_config.update_config(config)
 
