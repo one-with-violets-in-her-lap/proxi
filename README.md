@@ -14,10 +14,18 @@ curl ifconfig.me
 HTTPS_PROXY="" wget https://example.com
 ```
 
-![Screenshot of the Proxi app interface showing proxy profiles named 'work',
-'browsing', and 'profile 4'. The 'work' profile is active with proxy addresses listed
-in HTTP, HTTPS, and SOCKS5 formats. A toggle switch indicates that proxy preferences are enabled.
-Cartoon-style characters are drawn at the top right corner.](./readme-assets/screenshot.jpg)
+<table>
+  <tr>
+    <td>
+     <img src="./readme-assets/cli-screenshot.jpg" alt="CLI screenshot" />
+    </td>
+
+    <td>
+      <img src="./readme-assets/screenshot.jpg" alt="UI screenshot" />
+    </td>
+
+  </tr>
+</table>
 
 ## OS Compatibility
 
@@ -25,25 +33,31 @@ The app was tested with following Linux systems:
 
 - GNOME-based distros (or systems with [gsettings](https://wiki.gentoo.org/wiki/Gsettings) support, which
   is enough)
-    - Examples: Cinnamon, Ubuntu
+  - Examples: Cinnamon, Ubuntu
 
 - Distros with KDE 6
-    - Examples: Manjaro KDE, Kubuntu
+  - Examples: Manjaro KDE, Kubuntu
 
 Other Linux systems may also work, but can require additional setup
 
 ## Installation
 
-Install an [archive with an executable](https://github.com/one-with-violets-in-her-lap/proxi/releases/latest) and extract it:
+Install an [archive with an executable](https://github.com/one-with-violets-in-her-lap/proxi/releases/latest), choose UI or CLI version
+and extract:
 
 ```shell
-tar -xf ./proxi.tar.gz
+tar -xf ./proxi-cli.tar.gz # CLI version
+tar -xf ./proxi-ui.tar.gz # UI version
 ```
 
 You can run it like that:
 
 ```shell
-./proxi/proxi
+# UI
+./proxi-ui/proxi-ui
+
+# CLI
+./proxi-cli/proxi
 ```
 
 To make it more convenient, add the binary to your shell PATH:
@@ -51,7 +65,7 @@ To make it more convenient, add the binary to your shell PATH:
 `~/.bashrc` (example):
 
 ```shell
-PATH=$PATH:/mnt/1-tb-AGI1K0GIMAI/apps/proxi
+PATH=$PATH:/path/to/proxi
 ```
 
 ### Integration with shell and unsupported systems
@@ -68,4 +82,3 @@ fi
 
 > :eyes: You can also use this script to integrate Proxi on unsupported WM or DE by running it on startup (e.g. ~/.xsessionrc)
 
-TODO: run from source
