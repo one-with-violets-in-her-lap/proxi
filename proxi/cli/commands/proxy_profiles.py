@@ -18,9 +18,9 @@ _ERROR_MESSAGES_BY_FIELD_LOC = {
 
 
 def _format_proxy_profile(profile: ProxyProfile):
-    formatted_profile = click.style("● ", fg="green") + click.style(
-        profile.name, bold=True
-    )
+    formatted_profile = (
+        click.style("● ", fg="green") if profile.is_active else ""
+    ) + click.style(profile.name, bold=True)
 
     if profile.settings.http_proxy is not None:
         formatted_profile = formatted_profile + f"\nHTTP: {profile.settings.http_proxy}"
@@ -116,13 +116,15 @@ def _handle_create_profile_command(
 
 @profiles_commands.command("update", help="Update a proxy profile")
 @click.argument("name", required=True)
+@click.option("--name", "new_name")
 @click.option("--http", "http_proxy")
 @click.option("--https", "https_proxy")
 @click.option("--socks5", "socks5_proxy")
 @click.pass_context
-def _handle_create_profile_command(
+def _handle_update_profile_command(
     context: click.Context,
     name: str,
+    new_name: str | None,
     http_proxy: str | None,
     https_proxy: str | None,
     socks5_proxy: str | None,
@@ -143,31 +145,34 @@ def _handle_create_profile_command(
     target_profile = matching_profiles[0]
 
     try:
-        new_proxy_profile = ProxyProfileInput.model_validate(
-            {
-                "name": name,
-                "is_active": False,
-                "settings": {
-                    "http_proxy": http_proxy,
-                    "https_proxy": https_proxy,
-                    "socks5_proxy": socks5_proxy,
-                },
-            }
-        )
+        profile_update_input = {
+            "name": new_name if new_name is not None else name,
+            "is_active": False,
+            "settings": {
+                "http_proxy": http_proxy,
+                "https_proxy": https_proxy,
+                "socks5_proxy": socks5_proxy,
+            },
+        }
 
-        if new_proxy_profile.settings.http_proxy is None:
-            new_proxy_profile.settings.http_proxy = target_profile.settings.http_proxy
+        if http_proxy is None:
+            profile_update_input["settings"]["http_proxy"] = (
+                target_profile.settings.http_proxy
+            )
 
-        if new_proxy_profile.settings.https_proxy is None:
-            new_proxy_profile.settings.https_proxy = target_profile.settings.https_proxy
+        if https_proxy is None:
+            profile_update_input["settings"]["https_proxy"] = (
+                target_profile.settings.https_proxy
+            )
 
-        if new_proxy_profile.settings.socks5_proxy is None:
-            new_proxy_profile.settings.socks5_proxy = (
+        if socks5_proxy is None:
+            profile_update_input["settings"]["socks5_proxy"] = (
                 target_profile.settings.socks5_proxy
             )
 
         cli_context["proxy_profiles_service"].update_profile(
-            matching_profiles[0].id, new_proxy_profile
+            matching_profiles[0].id,
+            ProxyProfileInput.model_validate(profile_update_input),
         )
 
         milliseconds_took = (timeit.default_timer() - start_seconds_time) * 1000
