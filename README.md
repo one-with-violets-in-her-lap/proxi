@@ -14,16 +14,16 @@ curl ifconfig.me
 HTTPS_PROXY="" wget https://example.com
 ```
 
+Comes with **CLI** and **GUI** version
+
 <table>
   <tr>
     <td>
      <img src="./readme-assets/cli-screenshot.jpg" alt="CLI screenshot" />
     </td>
-
-    <td>
-      <img src="./readme-assets/screenshot.jpg" alt="UI screenshot" />
+    <td width="500">
+      <img src="./readme-assets/ui-screenshot.jpg" alt="UI screenshot" />
     </td>
-
   </tr>
 </table>
 
