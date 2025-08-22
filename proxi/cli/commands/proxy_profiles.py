@@ -18,14 +18,8 @@ _ERROR_MESSAGES_BY_FIELD_LOC = {
 
 
 def _format_proxy_profile(profile: ProxyProfile):
-    DIVIDER = click.style("----------------------------", dim=True)
-
-    formatted_profile = (
-        DIVIDER
-        + "\n"
-        + click.style(profile.name, bold=True)
-        + click.style(f" ({profile.id})", dim=True)
-        + "\n"
+    formatted_profile = click.style("● ", fg="green") + click.style(
+        profile.name, bold=True
     )
 
     if profile.settings.http_proxy is not None:
@@ -41,7 +35,7 @@ def _format_proxy_profile(profile: ProxyProfile):
             formatted_profile + f"\nSOCKS5: {profile.settings.socks5_proxy}"
         )
 
-    return formatted_profile + "\n" + DIVIDER
+    return formatted_profile + "\n"
 
 
 @click.group("profiles", invoke_without_command=True)
@@ -66,7 +60,7 @@ def profiles_commands(
 
     click.echo(
         click.style("\n* Proxi / profiles", bold=True)
-        + "\n\n"
+        + "\n\n\n"
         + "\n\n".join(formatted_proxy_profiles)
         + click.style(f"\n\n\t\t({milliseconds_took:.1f} ms)", dim=True)
     )
@@ -179,7 +173,8 @@ def _handle_create_profile_command(
         milliseconds_took = (timeit.default_timer() - start_seconds_time) * 1000
 
         click.echo(
-            "+ Profile updated"
+            click.style("+", fg="green", dim=True)
+            + "Profile updated"
             + click.style(f"\t({milliseconds_took:.1f} ms)", dim=True)
         )
     except ProfileAlreadyExistsError:
@@ -213,5 +208,34 @@ def _handle_profile_delete_command(context: click.Context, name: str):
     click.echo(
         click.style("-", fg="red")
         + " Profile deleted"
+        + click.style(f"\t({milliseconds_took:.1f} ms)", dim=True)
+    )
+
+
+@click.command("activate")
+@click.pass_context
+@click.argument("profile_name", required=True)
+def handle_profile_activate_command(context: click.Context, profile_name: str):
+    start_seconds_time = timeit.default_timer()
+
+    cli_context: CliContext = context.obj
+
+    profiles = cli_context["proxy_profiles_service"].get_profiles()
+    profiles_to_delete = [
+        profile for profile in profiles if profile.name == profile_name
+    ]
+
+    if len(profiles_to_delete) == 0:
+        raise CliError(f"Profile with name {profile_name} cannot be found")
+
+    cli_context["proxy_profiles_service"].set_profile_as_active(
+        profiles_to_delete[0].id
+    )
+
+    milliseconds_took = (timeit.default_timer() - start_seconds_time) * 1000
+
+    click.echo(
+        click.style("🗸", fg="green", dim=True)
+        + " Profile activated"
         + click.style(f"\t({milliseconds_took:.1f} ms)", dim=True)
     )
