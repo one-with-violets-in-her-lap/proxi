@@ -24,7 +24,7 @@ class AppWindow(QtWidgets.QMainWindow):
     ):
         super().__init__()
 
-        self.setWindowTitle("Proxi")
+        self.setWindowTitle("Proxí")
 
         self.resize(WINDOW_MIN_WIDTH, WINDOW_HEIGHT)
         self.setMaximumHeight(WINDOW_HEIGHT)
