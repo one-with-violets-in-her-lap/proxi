@@ -42,7 +42,7 @@ Other Linux systems may also work, but can require additional setup
 
 ## Installation
 
-Install an [archive with an executable](https://github.com/one-with-violets-in-her-lap/proxi/releases/latest), choose UI or CLI version
+Install an [archive with an executable](https://github.com/one-with-violets-in-her-lap/proxi/releases/latest), choose [UI](https://github.com/one-with-violets-in-her-lap/proxi/releases?q=UI&expanded=true) or [CLI](https://github.com/one-with-violets-in-her-lap/proxi/releases?q=CLI&expanded=true) version
 and extract:
 
 ```shell
