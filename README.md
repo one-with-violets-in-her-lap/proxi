@@ -18,7 +18,7 @@ Comes with **CLI** and **GUI** version
 
 <table>
   <tr>
-    <td>
+    <td valign="top">
      <img src="./readme-assets/cli-screenshot.jpg" alt="CLI screenshot" />
     </td>
     <td width="500">
