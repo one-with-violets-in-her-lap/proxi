@@ -90,12 +90,12 @@ class ProxyProfileListWidget(QtWidgets.QWidget):
             raise error
 
     def _handle_profile_select(self, profile: ProxyProfile):
-        self.proxy_profiles_service.set_profile_as_active(profile)
+        self.proxy_profiles_service.set_profile_as_active(profile.id)
 
         self._update_card_list(self.proxy_profiles_service.get_profiles())
 
     def _handle_profile_delete(self, profile: ProxyProfile):
-        self.proxy_profiles_service.delete_profile(profile)
+        self.proxy_profiles_service.delete_profile(profile.id)
 
         self._update_card_list(self.proxy_profiles_service.get_profiles())
 
@@ -106,7 +106,7 @@ class ProxyProfileListWidget(QtWidgets.QWidget):
         dialog: ProfileFormDialogWidget,
     ):
         try:
-            self.proxy_profiles_service.update_profile(target_profile, new_profile)
+            self.proxy_profiles_service.update_profile(target_profile.id, new_profile)
             self._update_card_list(self.proxy_profiles_service.get_profiles())
 
             dialog.accept()

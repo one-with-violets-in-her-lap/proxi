@@ -16,6 +16,9 @@ Repository = "https://github.com/one-with-violets-in-her-lap/proxi"
 ui = [
     "pyside6>=6.9.1",
 ]
+cli = [
+    "click>=8.2.1",
+]
 
 [dependency-groups]
 dev = [

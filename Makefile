@@ -1,5 +1,8 @@
-start:
+run-ui:
 	uv run python -m proxi.ui.main
+
+run-cli:
+	uv run python -m proxi.cli.main
 
 format:
 	uv run ruff format
@@ -14,5 +17,8 @@ test:
 	uv run pytest
 
 build-ui-exe:
-	uv run pyinstaller -n Proxi --add-data ./assets:./assets ./proxi/ui/main.py
+	uv run pyinstaller -n proxy-ui --add-data ./assets:./assets ./proxi/ui/main.py
+
+build-cli-exe:
+	uv run pyinstaller -n proxy-cli --add-data ./proxi/cli/main.py
 
