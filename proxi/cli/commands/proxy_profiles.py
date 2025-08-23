@@ -3,7 +3,7 @@ import timeit
 import click
 from pydantic import ValidationError
 
-from proxi.cli.commands.utils.errors import CliError
+from proxi.cli.utils.errors import CliError
 from proxi.cli.context import CliContext
 from proxi.core.models.proxy import ProxyProfile, ProxyProfileInput
 from proxi.core.utils.errors import ProfileAlreadyExistsError
@@ -43,6 +43,10 @@ def _format_proxy_profile(profile: ProxyProfile):
 def profiles_commands(
     context: click.Context,
 ):
+    """
+    View and manage your profiles
+    """
+
     if context.invoked_subcommand is not None:
         return
 
@@ -221,6 +225,8 @@ def _handle_profile_delete_command(context: click.Context, name: str):
 @click.pass_context
 @click.argument("profile_name", required=True)
 def handle_profile_activate_command(context: click.Context, profile_name: str):
+    """Select profile which proxy settings to use"""
+
     start_seconds_time = timeit.default_timer()
 
     cli_context: CliContext = context.obj

@@ -11,6 +11,10 @@ DISABLED_MESSAGE = click.style("disabled", fg="red")
 @click.command("status")
 @click.pass_context
 def handle_proxy_status_command(context: click.Context):
+    """
+    Check if proxy is enabled
+    """
+
     cli_context: CliContext = context.obj
 
     start_seconds_time = timeit.default_timer()
@@ -28,6 +32,10 @@ def handle_proxy_status_command(context: click.Context):
 @click.command("on")
 @click.pass_context
 def handle_proxy_on_command(context: click.Context):
+    """
+    Enable the proxy
+    """
+
     cli_context: CliContext = context.obj
 
     start_seconds_time = timeit.default_timer()
@@ -45,6 +53,10 @@ def handle_proxy_on_command(context: click.Context):
 @click.command("off")
 @click.pass_context
 def handle_proxy_off_command(context: click.Context):
+    """
+    Disable the proxy
+    """
+
     cli_context: CliContext = context.obj
 
     start_seconds_time = timeit.default_timer()
