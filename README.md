@@ -16,16 +16,7 @@ HTTPS_PROXY="" wget https://example.com
 
 Comes with **CLI** and **GUI** version
 
-<table>
-  <tr>
-    <td valign="top">
-     <img src="./readme-assets/cli-screenshot.jpg" alt="CLI screenshot" />
-    </td>
-    <td width="500">
-      <img src="./readme-assets/ui-screenshot.jpg" alt="UI screenshot" />
-    </td>
-  </tr>
-</table>
+![](./preview.jpg)
 
 ## OS Compatibility
 
