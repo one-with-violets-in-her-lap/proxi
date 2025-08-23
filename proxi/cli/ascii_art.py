@@ -1,3 +1,5 @@
+from proxi.cli.version import PROXI_CLI_VERSION
+
 ASCII_ART = """
          █████████████         
      ████████ ███ ████████     
@@ -14,4 +16,4 @@ ASCII_ART = """
      ████████ ███ ████████     
          █████████████         
                                  Proxi * {version}
-""".format(version="v0.1.0").replace("\n", "\b\n")
+""".format(version=PROXI_CLI_VERSION).replace("\n", "\b\n")

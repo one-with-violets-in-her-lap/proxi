@@ -1,1 +1,1 @@
-VERSION = "v0.1.0"
+PROXI_CLI_VERSION = "v0.2.0"
