@@ -1,6 +1,6 @@
 # Proxí
 
-Little utility for managing proxy preferences in Linux. It does not forcefully tunnel all your requests, but
+Little utility for managing proxy preferences in Linux with an ability to store multiple settings as profiles. It does not forcefully tunnel all your requests, but
 rather tells the apps to use specified proxy. This allows a more flexible control over which apps should
 use a proxy and which apps should not
 
